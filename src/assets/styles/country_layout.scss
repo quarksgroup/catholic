@@ -1,0 +1,139 @@
+.country-dashboard {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: auto;
+  grid-template-rows: 70px calc(100vh - 70px);
+
+  #country-nav {
+    grid-row: 1;
+    background: blueviolet;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    height: 100%;
+    box-shadow: 0 1px 6px 0 rgba(32, 33, 36, 0.28);
+    z-index: 999;
+
+    .logo {
+      min-width: 80px;
+      font-size: 24px;
+      letter-spacing: 1px;
+      font-weight: bold;
+    }
+    .links {
+      align-self: flex-end;
+      flex: 1;
+      margin: 0 2rem;
+      ul {
+        display: flex;
+        align-items: center;
+        flex: 1;
+
+        li {
+          flex: 1;
+          text-align: center;
+          padding: 0.4rem;
+          font-size: 15px;
+          text-transform: capitalize;
+          cursor: pointer;
+          background: blueviolet;
+          color: white;
+          white-space: nowrap;
+          margin: 0 1px;
+
+          &:hover {
+            background: white;
+            transition: background 350ms;
+            color: blueviolet;
+          }
+          i {
+            margin-right: 5px;
+          }
+        }
+        li.active {
+          background: white;
+          color: blueviolet;
+        }
+      }
+    }
+    .user-profile {
+      max-height: 50px;
+      min-height: 50px;
+      max-width: 50px;
+      min-width: 50px;
+      border-radius: 50%;
+      border: 1px solid ghostwhite;
+      background: ghostwhite;
+      margin-right: 10px;
+      cursor: pointer;
+
+      img {
+        height: 100%;
+        width: 100%;
+      }
+    }
+    .menu {
+      display: none;
+    }
+  }
+  #country-content {
+    grid-row: 2;
+    padding: 2rem 1rem;
+    height: -webkit-fill-available;
+    overflow: auto;
+
+    &::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #777777;
+      outline: 1px solid slategrey;
+      border-radius: 2px;
+    }
+  }
+  @media only screen and(max-width:730px) {
+    max-width: 730px;
+    #country-nav {
+      .user-profile {
+        margin-right: 0;
+      }
+      .links {
+        margin: 0 1rem;
+      }
+    }
+  }
+  @media only screen and(max-width:665px) {
+    max-width: 665px;
+
+    #country-nav {
+      .logo {
+        max-width: none;
+        flex: 1;
+      }
+      .links {
+        display: none;
+      }
+      .user-profile {
+        margin-right: 0;
+      }
+      .menu {
+        height: inherit;
+        max-height: inherit;
+        padding: 1.5rem 0;
+        display: block !important;
+        margin-left: 0.5rem;
+        img {
+          height: 100%;
+          width: auto;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

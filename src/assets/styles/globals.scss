@@ -1,0 +1,84 @@
+body,
+html {
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+html {
+  overflow-y: auto !important;
+}
+
+#catholic-app {
+  font-family: "Roboto Slab", Helvetica, Arial, serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+  position: absolute;
+  letter-spacing: 0.5px;
+  line-height: 150%;
+  min-height: 100vh;
+  min-width: 100vw;
+  background-color: #f8f8ff;
+  overflow: auto;
+  .is-primary {
+    color: ghostwhite;
+    background-color: blueviolet;
+    font-family: inherit;
+    &button:hover,
+    &.is-hovered {
+      background-color: #714dd2;
+    }
+  }
+  .no-select {
+    user-select: none;
+  }
+  .no-b-radius {
+    border-radius: 1px !important;
+    div,
+    button,
+    input,
+    select,
+    textarea {
+      border-radius: 1px !important;
+    }
+  }
+  .no-shadow {
+    input {
+      box-shadow: none !important;
+    }
+  }
+  .cursor-pointer {
+    cursor: pointer;
+  }
+  .p-3 {
+    padding: 1rem;
+  }
+  .p2 {
+    padding: 0.75rem;
+  }
+  .p-1 {
+    padding: 0.5rem;
+  }
+  .mr-1 {
+    margin-right: 0.25rem;
+  }
+  .mt-3 {
+    margin-top: 1rem;
+  }
+  .w-100 {
+    width: 100%;
+  }
+  .w-50 {
+    width: 50%;
+  }
+}
+.iziToast {
+  border-radius: 1px !important;
+  font-family: "Roboto Slab", Helvetica, Arial, serif !important;
+  &::after {
+    box-shadow: 0 5px 10px 0 rgba(32, 33, 36, 0.46) !important;
+    border-radius: 1px !important;
+  }
+}
+@import "./login.scss";
+@import "./country_layout.scss";
