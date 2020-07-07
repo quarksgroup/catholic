@@ -99,6 +99,7 @@ export default {
   grid-column-gap: 1rem;
   //100vh - navbar height - country-content padding
   height: calc(100vh - 70px - 4rem);
+  grid-template-rows: max-content;
 
   .all-accounts {
     grid-column: 2;

@@ -1,7 +1,7 @@
 <template>
   <div class="login-page">
     <div class="img">
-      <img src="@/assets/img/login_svg.svg" alt="Kominote Emmanuel" />
+      <img :src="img.logo" alt />
     </div>
     <div class="form">
       <form @submit.prevent="login">
@@ -9,32 +9,36 @@
         <div class="form-control">
           <label for="input">Email:</label>
           <input
+            trim
+            required
+            autofocus
             type="email"
             name="email"
             id="username"
             class="username"
+            v-model="username"
+            placeholder="Enter email address"
             title="valid email address is required"
             pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-            placeholder="Enter email address"
-            required
           />
         </div>
         <div class="form-control">
           <label for="input">Password:</label>
           <input
-            type="password"
-            name="password"
-            id="password"
-            pattern=".{1,}"
-            title="Password required"
-            class="password"
             required
+            id="password"
+            name="password"
+            type="password"
+            pattern=".{1,}"
+            class="password"
+            v-model="password"
+            title="Password required"
             placeholder="Enter password"
           />
         </div>
         <button type="submit" class="loginBtn">
-          <p v-if="!state.loading">Login</p>
-          <img v-else src="../../assets/img/white-spinner.svg" />
+          <img v-if="state.loading" :src="img.spinner" />
+          <p v-else>Login</p>
         </button>
       </form>
     </div>
@@ -42,13 +46,21 @@
 </template>
 
 <script>
+import spinner from "../../assets/img/white-spinner.svg";
+import logo from "../../assets/img/login_svg.svg";
 export default {
   name: "login",
   data() {
     return {
       state: {
         loading: false
-      }
+      },
+      img: {
+        logo: logo,
+        spinner: spinner
+      },
+      username: "",
+      password: ""
     };
   },
   mounted() {
@@ -57,6 +69,7 @@ export default {
   methods: {
     login() {
       this.state.loading = true;
+      this.axios.post("login", { username: this.username, password: "password" });
       setTimeout(() => {
         this.$router.push("/country");
         this.state.loading = false;

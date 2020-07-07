@@ -1,12 +1,12 @@
 <template>
   <div class="studies-dashboard">
-    <header>
-      <h5>Inyigisho zose</h5>
-      <b-button class="is-primary no-b-radius" @click="$modal.show('add-study')">
-        <i class="fa fa-plus" /> Add inyigisho
-      </b-button>
-    </header>
     <div class="studies">
+      <header>
+        <h5>Inyigisho zose</h5>
+        <b-button class="is-primary no-b-radius" @click="$modal.show('add-study')">
+          <i class="fa fa-plus" /> Add inyigisho
+        </b-button>
+      </header>
       <div class="study" v-for="i in 11" :key="i">
         <div class="video">
           <i class="fa fa-play-circle" />
@@ -31,32 +31,32 @@ export default {};
 
 <style lang="scss">
 .studies-dashboard {
-  & > header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    border-bottom: 2px solid #999;
-    padding: 0.5rem 0;
-    h5 {
-      font-size: 18px;
-      text-transform: capitalize;
-      font-weight: bold;
+  .studies {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 300px));
+    grid-column-gap: 2rem;
+    grid-row-gap: 1rem;
+    justify-content: center;
+    align-items: center;
+
+    & > header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 2px solid #999;
+      padding: 0.5rem 0;
+      grid-column: 1/-1;
+      h5 {
+        font-size: 18px;
+        text-transform: capitalize;
+        font-weight: bold;
+      }
     }
-  }
-  & > .studies {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0.5rem 0;
-    justify-content: space-between;
+
     .study {
       background: white;
       box-shadow: 0 2px 5px 0 rgba(32, 33, 36, 0.23);
       border-radius: 3px;
-      margin: 1.5rem 1rem;
-      flex: 1;
-      flex-basis: 250px;
-      min-width: 250px;
-      max-width: 350px;
 
       .video {
         min-height: 200px;
@@ -65,6 +65,9 @@ export default {};
         display: flex;
         justify-content: center;
         align-items: center;
+        border-radius: inherit;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
         i {
           font-size: 400%;
           color: white;
