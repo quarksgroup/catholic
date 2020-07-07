@@ -1,12 +1,14 @@
 import Vue from "vue";
+import axios from "axios";
+import Buefy from "buefy";
 import App from "./App.vue";
-import "@/assets/styles/globals.scss";
+import store from "./store";
+import "buefy/dist/buefy.css";
+import VueAxios from "vue-axios";
 import "./registerServiceWorker";
 import router from "./router.js";
-import store from "./store";
-import Buefy from "buefy";
-import "buefy/dist/buefy.css";
 import VModal from "vue-js-modal";
+import "@/assets/styles/globals.scss";
 import VueIziToast from "vue-izitoast";
 import "izitoast/dist/css/iziToast.min.css";
 
