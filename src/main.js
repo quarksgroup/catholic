@@ -33,32 +33,55 @@ Vue.use(VueIziToast, {
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_BASEURL,
 });
-// axiosInstance.interceptors.request.use(
-//   (config) => {
-//     if (sessionStorage.getItem("token"))
-//       axiosInstance.defaults.headers.common["Authorization"] =
-//         "Bearer " + sessionStorage.getItem("token");
-//     return config;
-//   },
+axiosInstance.interceptors.request.use(
+  (config) => {
+    // if (sessionStorage.getItem("token"))
+    //   axiosInstance.defaults.headers.common["Authorization"] =
+    //     "Bearer " + sessionStorage.getItem("token");
+    return config;
+  },
 
-//   (error) => {
-//     if (navigator.onLine === false)
-//       Vue.prototype.$snotify.error("Please check internet connectivity!");
-//     return Promise.reject(error);
-//   }
-// );
+  (error) => {
+    // if (navigator.onLine === false)
+    //   Vue.prototype.$snotify.error("Please check internet connectivity!");
+    console.log("from MAIN/request: error.code" + error.code);
+    return Promise.reject(error);
+  }
+);
 
-// axiosInstance.interceptors.response.use(
-//   (response) => {
-//     return Promise.resolve(response);
-//   },
-//   (error) => {
-//     if (error.response && error.response.status === 401)
-//       store.dispatch("logout");
-
-//     return Promise.reject(error);
-//   }
-// );
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return Promise.resolve(response);
+  },
+  (error) => {
+    // console.log(error);
+    // console.log(error.code);
+    // console.log(error.request);
+    // console.log(error.response);
+    // console.log(error.errorMessage);
+    try {
+      if (error.response && error.response.status === 401)
+        //logout
+        location.reload();
+      else if (error.response && error.response.status === 404)
+        return Promise.reject({
+          errorMessage: "can't find the resource you are searching for!",
+        });
+      else if (error.code === "ECONNABORTED")
+        return Promise.reject({
+          errorMessage: "Your connection is weak! try again",
+        });
+      else
+        return Promise.reject({
+          errorMessage: error.response.data.message || error,
+        });
+    } catch {
+      return Promise.reject({
+        errorMessage: "something is wrong! try refreshing this page",
+      });
+    }
+  }
+);
 Vue.use(VueAxios, axiosInstance);
 
 Vue.config.productionTip = false;

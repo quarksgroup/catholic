@@ -32,7 +32,7 @@ html {
   .no-select {
     user-select: none;
   }
-  .no-b-radius {
+  .br-1 {
     border-radius: 1px !important;
     div,
     button,
@@ -80,5 +80,103 @@ html {
     border-radius: 1px !important;
   }
 }
+
+.loading-primary,
+.loading-light {
+  position: relative;
+  pointer-events: none;
+  text-indent: -99999px;
+}
+.loading-primary:after,
+.loading-primary:before,
+.loading-light:after,
+.loading-light:before {
+  top: 0;
+  left: 0;
+  margin-top: 0;
+  margin-left: 0;
+  content: " ";
+  display: block;
+  position: absolute;
+  border-radius: 50%;
+  width: inherit;
+  height: inherit;
+  border: solid 3px transparent;
+}
+.loading-light:before {
+  border-left-color: #fff;
+  animation: rotate 0.5s infinite linear;
+  -webkit-animation: rotate 0.5s infinite linear;
+  -moz-animation: rotate 0.5s infinite linear;
+  -o-animation: rotate 0.5s infinite linear;
+}
+.loading-light:after {
+  border-bottom-color: #fff;
+  animation: rotate 1s infinite linear;
+  -webkit-animation: rotate 1s infinite linear;
+  -moz-animation: rotate 1s infinite linear;
+  -o-animation: rotate 1s infinite linear;
+}
+.loading-primary:before {
+  border-left-color: #2c3e50;
+  animation: rotate 0.5s infinite linear;
+  -webkit-animation: rotate 0.5s infinite linear;
+  -moz-animation: rotate 0.5s infinite linear;
+  -o-animation: rotate 0.5s infinite linear;
+}
+.loading-primary:after {
+  border-bottom-color: #2c3e50;
+  animation: rotate 1s infinite linear;
+  -webkit-animation: rotate 1s infinite linear;
+  -moz-animation: rotate 1s infinite linear;
+  -o-animation: rotate 1s infinite linear;
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes rotate {
+  0% {
+    -webkit-transform: rotate(0);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@-moz-keyframes rotate {
+  0% {
+    -moz-transform: rotate(0);
+  }
+  100% {
+    -moz-transform: rotate(360deg);
+  }
+}
+@-o-keyframes rotate {
+  0% {
+    -o-transform: rotate(0);
+  }
+  100% {
+    -o-transform: rotate(360deg);
+  }
+}
+
+.select-grids {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-column-gap: 1rem;
+  grid-row-gap: 1rem;
+  align-items: start;
+  justify-content: center;
+  margin-bottom: 2rem;
+
+  .field {
+    margin-bottom: 0;
+  }
+}
+
 @import "./login.scss";
 @import "./country_layout.scss";

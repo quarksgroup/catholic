@@ -5,34 +5,34 @@
     </header>
     <form @submit.prevent="addAccount">
       <b-field label="Names:">
-        <b-input type="text" placeholder="Enter names..." class="no-b-radius no-shadow" required />
+        <b-input type="text" placeholder="Enter names..." class="br-1 no-shadow" required />
       </b-field>
       <b-field label="Phone number:">
         <b-input
           type="number"
           placeholder="Enter phone number..."
-          class="no-b-radius no-shadow"
+          class="br-1 no-shadow"
           required
         />
       </b-field>
       <div class="select-grids">
         <b-field label="Country:">
-          <b-select placeholder="select country..." class="no-b-radius" required>
+          <b-select placeholder="select country..." class="br-1" required>
             <option value="hello">hello</option>
           </b-select>
         </b-field>
         <b-field label="Province:">
-          <b-select placeholder="select province..." class="no-b-radius" required>
+          <b-select placeholder="select province..." class="br-1" required>
             <option value="hello">hello</option>
           </b-select>
         </b-field>
         <b-field label="Sector:">
-          <b-select placeholder="select sector..." class="no-b-radius" required>
+          <b-select placeholder="select sector..." class="br-1" required>
             <option value="hello">hello</option>
           </b-select>
         </b-field>
         <b-field label="Groupe de priere:">
-          <b-select placeholder="select Gr.Priere..." class="no-b-radius" required>
+          <b-select placeholder="select Gr.Priere..." class="br-1" required>
             <option value="hello">hello</option>
           </b-select>
         </b-field>

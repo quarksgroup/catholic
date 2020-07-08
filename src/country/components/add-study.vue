@@ -6,7 +6,7 @@
     </header>
     <div class="body">
       <b-field label="Title:">
-        <b-input placeholder="Inyigisho Title..." class="no-shadow no-b-radius" />
+        <b-input placeholder="Inyigisho Title..." class="no-shadow br-1" />
       </b-field>
       <b-field label="video:">
         <b-upload
@@ -14,7 +14,7 @@
           multiple
           drag-drop
           expanded
-          class="no-b-radius w-100"
+          class="br-1 w-100"
           type="is-dark"
           v-if="files.length < 1"
         >

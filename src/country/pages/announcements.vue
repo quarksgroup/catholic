@@ -4,41 +4,65 @@
       <header>
         <h5>Announcements in country</h5>
 
-        <b-button class="is-primary no-b-radius" @click="$modal.show('add-announcement')">
+        <b-button class="is-primary br-1" @click="$modal.show('add-announcement')">
           <i class="fa fa-plus" /> Add announcement
         </b-button>
       </header>
-      <div class="announcement" v-for="i in 5" :key="i">
-        <div class="img no-select">
-          <img src="../../assets/img/notify.svg" alt="notify_image" />
-        </div>
-        <div class="description">
-          <header>
-            <h5>Ubutumire kubanyamuryango ba croix rouge bose</h5>
-            <hr class="hr" />
-          </header>
-          <p>Lorem ipsum dolor sit amet consectetur</p>
-          <b-button class="is-small is-primary">options</b-button>
-        </div>
+      <div class="page-loading" v-if="state.loading">
+        <div class="loading-component loading-primary"></div>
+        <p>Fetching...</p>
+      </div>
+      <announcement v-else-if="announcements.length > 0" v-for="i in 5" :key="i" />
+      <div class="page-error" v-else>
+        <p>There are no announcements, For now!</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import announcement from "../components/announcement.vue";
 export default {
   components: {
-    "add-announcement": () => import("../components/add-announcement")
+    "add-announcement": () => import("../components/add-announcement"),
+    announcement
+  },
+  data() {
+    return {
+      announcements: [],
+      state: { loading: true, error: "" }
+    };
+  },
+  computed: {
+    user() {
+      return this.$store.getters.userDetails;
+    }
+  },
+  beforeMount() {
+    this.fetchData();
+    console.log(this.user);
   },
   destroyed() {
-    // console.log("destroyed");
+    this.$delete(this.announcements);
   },
   methods: {
-    waiting() {
-      setTimeout(() => {
-        console.log("hello");
-        return true;
-      }, 5000);
+    fetchData() {
+      this.state.loading = true;
+      this.axios
+        .get("/api/testimonial")
+        .then(res => {
+          console.log(res.data);
+          this.testimonials = res.data;
+          this.state.loading = false;
+        })
+        .catch(err => {
+          this.state.loading = false;
+          if (err) this.$toast.error(err.errorMessage || "");
+        });
+    },
+    clear() {
+      this.state.loading = false;
+      this.state.error = "";
     }
   }
 };
@@ -61,62 +85,48 @@ export default {
       align-items: center;
       border-bottom: 2px solid #999;
       justify-content: space-between;
+      flex-wrap: wrap;
 
       h5 {
-        font-size: 19px;
+        font-size: 1.35rem;
         font-weight: bold;
+        width: auto;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
       button {
         margin-left: 1rem;
       }
     }
-
-    .announcement {
-      background: white;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px 0 rgba(32, 33, 36, 0.2);
-      height: 100%;
-
-      .description {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 0.7rem;
-        header {
-          h5 {
-            font-size: 17px;
-            line-height: 115%;
-            font-weight: bold;
-            text-transform: capitalize;
-            text-align: left;
-          }
-          hr {
-            margin: 0.2rem 0 0.3rem;
-            background: #d6d6d6;
-          }
-        }
-        p {
-          margin: 0 0 0.5rem;
-          font-size: 16px;
-          color: #636363;
-          line-height: 120%;
-        }
-        button {
-          align-self: flex-end;
-        }
+    .page-loading {
+      grid-column: 1/-1;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 200px;
+      .loading-component {
+        height: 50px;
+        width: 50px;
       }
-      .img {
-        height: 120px;
-        background: #23063e;
-        display: flex;
-        border-radius: inherit;
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-        img {
-          height: 100%;
-          width: 50px;
-          margin: auto;
-        }
+      p {
+        margin-top: 1rem;
+        font-weight: bold;
+        font-size: 1rem;
+      }
+    }
+    .page-error {
+      grid-column: 1/-1;
+      min-height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      p {
+        font-weight: bold;
+        font-size: 1rem;
+        text-align: left;
       }
     }
   }

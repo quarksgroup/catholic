@@ -3,7 +3,7 @@
     <div class="studies">
       <header>
         <h5>Inyigisho zose</h5>
-        <b-button class="is-primary no-b-radius" @click="$modal.show('add-study')">
+        <b-button class="is-primary br-1" @click="$modal.show('add-study')">
           <i class="fa fa-plus" /> Add inyigisho
         </b-button>
       </header>

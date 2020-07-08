@@ -8,18 +8,18 @@
         <h1>Login</h1>
         <div class="form-control">
           <label for="input">Email:</label>
+          <!-- Email pattern pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" -->
           <input
             trim
             required
             autofocus
-            type="email"
+            type="text"
             name="email"
             id="username"
             class="username"
             v-model="username"
             placeholder="Enter email address"
             title="valid email address is required"
-            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
           />
         </div>
         <div class="form-control">
@@ -69,11 +69,19 @@ export default {
   methods: {
     login() {
       this.state.loading = true;
-      this.axios.post("login", { username: this.username, password: "password" });
-      setTimeout(() => {
-        this.$router.push("/country");
-        this.state.loading = false;
-      }, 3000);
+      const reqData = { username: this.username, password: this.password };
+      this.axios
+        .post("login", reqData)
+        .then(res => {
+          sessionStorage.setItem("token", res.data.token);
+          this.$store.dispatch("SETUSER", res.data.user);
+          this.$router.push("/country");
+          this.state.loading = false;
+        })
+        .catch(err => {
+          this.state.loading = false;
+          if (err) this.$toast.error(err.errorMessage);
+        });
     }
   }
 };
