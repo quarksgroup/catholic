@@ -1,6 +1,5 @@
 <template>
   <div class="accounts-dashboard">
-    <add-account />
     <div class="all-accounts">
       <header>
         <h5>Table of accounts</h5>
@@ -38,6 +37,7 @@
         </b-table>
       </div>
     </div>
+    <add-account />
   </div>
 </template>
 
@@ -95,14 +95,14 @@ export default {
 <style lang="scss">
 .accounts-dashboard {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 2fr 1fr;
   grid-column-gap: 1rem;
   //100vh - navbar height - country-content padding
   height: calc(100vh - 70px - 4rem);
   grid-template-rows: max-content;
 
   .all-accounts {
-    grid-column: 2;
+    grid-column: 1;
     border-radius: 5px;
     background: white;
     box-shadow: 1px 1px 6px 0 rgba(32, 33, 36, 0.28);

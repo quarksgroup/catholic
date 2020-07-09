@@ -142,9 +142,6 @@ export default {
       width: 100%;
       border-radius: 2px;
     }
-    .select {
-      width: 100%;
-    }
 
     & > .btn {
       display: flex;

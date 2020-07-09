@@ -1,48 +1,43 @@
 <template>
   <div class="add-testimonial">
     <header>Add Testimonial</header>
-    <div class="body">
-      <div class="control">
-        <b-field label="Testimonial Message:">
-          <textarea
-            name="testimonial_message"
-            id="testimonial-message"
-            rows="1"
-            cols="1"
-            placeholder="write Testimonial message here..."
-          ></textarea>
+    <form class="body" @submit.prevent="createTestimonial">
+      <b-field label="Testimonial Message:" class="mb-3">
+        <textarea
+          name="testimonial_message"
+          id="testimonial-message"
+          rows="1"
+          cols="1"
+          placeholder="write Testimonial message here..."
+          required
+        ></textarea>
+      </b-field>
+      <div class="select-grids">
+        <b-field label="Country:">
+          <b-select placeholder="select country..." class="br-1" required>
+            <option value="hello">hello</option>
+          </b-select>
         </b-field>
-      </div>
-      <div class="control">
-        <b-field class="columns is-full">
-          <b-field class="column is-half" label="country:">
-            <b-select placeholder="Select a level..." icon-pack="fa">
-              <option v-for="(option,i) in options" :value="option" :key="i">{{ option }}</option>
-            </b-select>
-          </b-field>
-          <b-field class="column is-half" label="Province:">
-            <b-select placeholder="Select a level..." icon-pack="fa">
-              <option v-for="(option,i) in options" :value="option" :key="i+300">{{ option }}</option>
-            </b-select>
-          </b-field>
+        <b-field label="Province:">
+          <b-select placeholder="select province..." class="br-1" required>
+            <option value="hello">hello</option>
+          </b-select>
         </b-field>
-        <b-field class="columns is-full">
-          <b-field class="column is-half" label="Sector:">
-            <b-select placeholder="Select a level..." icon-pack="fa">
-              <option v-for="(option,i) in options" :value="option" :key="i+100">{{ option }}</option>
-            </b-select>
-          </b-field>
-          <b-field class="column is-half" label="Groupe de priere:">
-            <b-select placeholder="Select a level..." icon-pack="fa">
-              <option v-for="(option,i) in options" :value="option" :key="i+200">{{ option }}</option>
-            </b-select>
-          </b-field>
+        <b-field label="Sector:">
+          <b-select placeholder="select sector..." class="br-1" required>
+            <option value="hello">hello</option>
+          </b-select>
+        </b-field>
+        <b-field label="Groupe de priere:">
+          <b-select placeholder="select Gr.Priere..." class="br-1" required>
+            <option value="hello">hello</option>
+          </b-select>
         </b-field>
       </div>
       <div class="btn control">
-        <b-button type="is-primary">Add</b-button>
+        <button class="br-1 button is-primary" type="submit">Add</button>
       </div>
-    </div>
+    </form>
   </div>
 </template>
 
@@ -52,6 +47,11 @@ export default {
     return {
       options: ["Country", "Diocese", "paroisse"]
     };
+  },
+  methods: {
+    createTestimonial() {
+      alert("This will create a testimonial");
+    }
   }
 };
 </script>
@@ -70,43 +70,41 @@ export default {
     color: ghostwhite;
     border-radius: 7px 7px 0 0;
   }
-  .body {
+  form.body {
     padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    label {
+      font-size: 15px;
+      margin-bottom: 0.2rem;
+    }
+    textarea {
+      width: 100% !important;
+      padding: 0.5rem;
+      min-height: 200px;
+      max-height: 200px;
+    }
+    select,
+    textarea {
+      color: #2c3e50;
+      border-color: #e0e0e7;
+      font-family: inherit;
+      font-size: 15px;
+      width: 100%;
+    }
 
-    .control {
+    .btn {
+      margin: 0;
       display: flex;
-      flex-direction: column;
-      label {
-        font-size: 15px;
-        color: #6b686d;
-        margin-bottom: 2px;
-      }
-      textarea {
-        width: 100% !important;
-        padding: 0.5rem;
-        min-height: 200px;
-        max-height: 200px;
-      }
-      select,
-      textarea {
-        border-radius: 5px !important;
-        color: #545258;
-        border-color: #e0e0e7;
+      justify-content: flex-end;
+      align-items: center;
+      button {
+        width: fit-content;
+        margin-left: auto;
+        border-radius: 5px;
+        padding: 4px 2rem;
+        height: fit-content;
         font-family: inherit;
-        font-size: 15px;
-        width: 100%;
-      }
-
-      &.btn {
-        margin: 0;
-        button {
-          width: fit-content;
-          margin-left: auto;
-          border-radius: 5px;
-          padding: 4px 2rem;
-          height: fit-content;
-          font-family: inherit;
-        }
       }
     }
   }

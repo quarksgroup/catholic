@@ -9,12 +9,12 @@
         </b-button>
       </header>
       <div class="page-loading" v-if="state.loading">
-        <div class="loading-component loading-primary"></div>
+        <div class="loading-component loading-primary" />
         <p>Fetching...</p>
       </div>
       <announcement v-else-if="announcements.length > 0" v-for="i in 5" :key="i" />
       <div class="page-error" v-else>
-        <p>There are no announcements, For now!</p>
+        <p>There are no announcements available, For now!</p>
       </div>
     </div>
   </div>
@@ -97,36 +97,6 @@ export default {
       }
       button {
         margin-left: 1rem;
-      }
-    }
-    .page-loading {
-      grid-column: 1/-1;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      height: 200px;
-      .loading-component {
-        height: 50px;
-        width: 50px;
-      }
-      p {
-        margin-top: 1rem;
-        font-weight: bold;
-        font-size: 1rem;
-      }
-    }
-    .page-error {
-      grid-column: 1/-1;
-      min-height: 100px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      p {
-        font-weight: bold;
-        font-size: 1rem;
-        text-align: left;
       }
     }
   }

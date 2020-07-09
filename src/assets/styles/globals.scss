@@ -62,8 +62,14 @@ html {
   .mr-1 {
     margin-right: 0.25rem;
   }
+  .mr-2 {
+    margin-right: 0.5rem;
+  }
   .mt-3 {
     margin-top: 1rem;
+  }
+  .mb-3 {
+    margin-bottom: 1rem;
   }
   .w-100 {
     width: 100%;
@@ -176,6 +182,47 @@ html {
   .field {
     margin-bottom: 0;
   }
+  .select {
+    width: 100%;
+  }
+}
+
+.page-loading {
+  grid-column: 1/-1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 200px;
+  .loading-component {
+    height: 50px;
+    width: 50px;
+  }
+  p {
+    margin-top: 1rem;
+    font-weight: bold;
+    font-size: 1rem;
+  }
+}
+.page-error {
+  grid-column: 1/-1;
+  min-height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  p {
+    font-weight: bold;
+    font-size: 1rem;
+    text-align: left;
+  }
+}
+
+.input[disabled] {
+  background-color: #fff;
+  border-color: #dbdbdb;
+  box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1);
+  color: inherit;
 }
 
 @import "./login.scss";

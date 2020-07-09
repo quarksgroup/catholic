@@ -1,23 +1,34 @@
 <template>
   <div class="testimonial-dashboard">
     <div class="all-testimonials">
-      <div class="control">
-        <header class="title is-6">All Testimonials</header>
-        <b-field v-if="testimonials.length > 0">
-          <b-input placeholder="Search title..." type="search" icon-pack="fa" icon="search"></b-input>
+      <header>
+        <h5 class="title">All Testimonials</h5>
+        <b-field>
+          <b-input
+            :disabled="testimonials.length < 1"
+            placeholder="Search title..."
+            type="search"
+            icon-pack="fa"
+            icon="search"
+          />
         </b-field>
-      </div>
+        <button class="button is-primary" @click="refresh">Refresh</button>
+      </header>
       <div class="body">
-        <div class="testimonial" v-for="testimonial in testimonials" :key="testimonial.id">
-          <header>{{testimonial.title}}</header>
-          <p class="description">{{testimonial.message}}</p>
-          <b-button class="is-primary is-small">Read More...</b-button>
+        <div class="page-loading" v-if="state.loading">
+          <div class="loading-component loading-primary" />
+          <p>Fetching...</p>
         </div>
-        <div class="is-empty no-select" v-if="!state.loading && testimonials.length < 0">
-          <i class="fa fa-attention" />
-          <p>No Testimonials available to display{{testimonials.length}}</p>
+
+        <div class="page-error" v-if="HideTestimonials">
+          <p>There are no testimonials available, For now!</p>
         </div>
-        <loader v-if="state.loading" />
+        <testimonial
+          v-else
+          v-for="testimonial in testimonials"
+          :key="testimonial.id"
+          :testimonial="testimonial"
+        />
       </div>
     </div>
     <add-testimonial />
@@ -25,19 +36,32 @@
 </template>
 
 <script>
+import testimonial from "../components/testimonial";
 export default {
   components: {
-    loader: () => import("@/globals/components/loading.vue"),
-    "add-testimonial": () => import("../components/add-testimonial")
+    "add-testimonial": () => import("../components/add-testimonial"),
+    testimonial
   },
   data() {
     return {
       options: ["country", "Diocese", "parish"],
       state: {
-        loading: false
+        loading: true,
+        is_refreshing: false
       },
       testimonials: []
     };
+  },
+  computed: {
+    HideTestimonials() {
+      if (this.state.loading == true)
+        return this.state.is_refreshing == true
+          ? this.testimonials.length < 1
+            ? true
+            : false
+          : false;
+      else return this.testimonials.length < 1;
+    }
   },
   destroyed() {
     this.state.loading = false;
@@ -52,6 +76,7 @@ export default {
       this.getData().then(res => {
         this.testimonials = res;
         this.state.loading = false;
+        this.state.is_refreshing = false;
       });
     },
     getData() {
@@ -62,6 +87,10 @@ export default {
           clearTimeout(timeout);
         }, 1000);
       });
+    },
+    refresh() {
+      this.state.is_refreshing = true;
+      this.loadData();
     }
   }
 };
@@ -77,51 +106,30 @@ export default {
   .all-testimonials {
     display: flex;
     flex-direction: column;
-    width: fit-content;
+    width: 100%;
     min-width: 450px;
-    .control {
+    & > header {
       display: flex;
       justify-content: space-between;
-      header {
-        font-size: 1.7rem;
+      border-bottom: 2px solid #999;
+      align-items: center;
+      padding-bottom: 0.3rem;
+      flex-wrap: wrap;
+      h5.title {
+        font-size: 1.45rem;
         white-space: nowrap;
         margin-right: 0.5rem;
+        margin-bottom: 0;
+        overflow: hidden;
+        width: auto;
+        text-overflow: ellipsis;
+        flex: 1;
       }
-      input {
-        font-family: inherit;
-      }
-    }
-    .body {
-      .testimonial {
-        width: fit-content;
-        background: white;
-        padding: 1rem;
-        border-radius: 3px;
-        box-shadow: 0 1px 4px 0 rgba(32, 33, 36, 0.28);
-        margin: 1rem 0;
-        display: flex;
-        flex-direction: column;
-
-        header {
-          font-size: 1.2rem;
-          font-weight: bold;
-          text-transform: capitalize;
-          margin-bottom: 0.5rem;
-        }
-
-        .description {
-          overflow: hidden;
-          display: -webkit-box;
-          -webkit-line-clamp: 4;
-          -webkit-box-orient: vertical;
-          line-height: 135%;
-          font-size: 15px;
-          opacity: 0.9;
-        }
-        button {
-          width: fit-content;
-          margin-left: auto;
-          margin-top: 1rem;
+      & > .field {
+        margin-bottom: 0;
+        margin-right: 0.5rem;
+        input {
+          font-family: inherit;
         }
       }
     }
