@@ -59,6 +59,7 @@ axiosInstance.interceptors.response.use(
     console.log(error.request);
     console.log(error.response);
     console.log(error.errorMessage);
+    console.log(process.env.VUE_APP_BASEURL);
     try {
       if (error.response && error.response.status === 401)
         //logout
