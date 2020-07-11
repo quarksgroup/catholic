@@ -54,11 +54,11 @@ axiosInstance.interceptors.response.use(
     return Promise.resolve(response);
   },
   (error) => {
-    // console.log(error);
-    // console.log(error.code);
-    // console.log(error.request);
-    // console.log(error.response);
-    // console.log(error.errorMessage);
+    console.log(error);
+    console.log(error.code);
+    console.log(error.request);
+    console.log(error.response);
+    console.log(error.errorMessage);
     try {
       if (error.response && error.response.status === 401)
         //logout
