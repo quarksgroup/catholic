@@ -60,9 +60,11 @@
     }
     button {
       align-self: flex-end;
-      height: 2rem;
-      width: 6.5rem;
-      font-size: 0.9rem;
+      width: fit-content;
+      margin-left: auto;
+      margin-top: 1rem;
+      padding: 1rem 0.75rem;
+      font-size: 0.9rem !important;
     }
   }
 }

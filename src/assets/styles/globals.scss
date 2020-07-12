@@ -1,25 +1,29 @@
+* {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
 body,
 html {
   padding: 0;
   margin: 0;
   position: relative;
+  background-color: #f8f8ff;
 }
 html {
   overflow-y: auto !important;
 }
 
 #catholic-app {
-  font-family: "Roboto Slab", Helvetica, Arial, serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+  font-family: "Roboto Slab", "Times New Roman", Times, serif, serif;
   position: absolute;
   letter-spacing: 0.5px;
   line-height: 150%;
   min-height: 100vh;
-  min-width: 100vw;
+  min-width: 100%;
   background-color: #f8f8ff;
   overflow: auto;
+  max-width: 1024px;
+  color: #2c3e50;
   .is-primary {
     color: ghostwhite;
     background-color: blueviolet;
@@ -33,13 +37,13 @@ html {
     user-select: none;
   }
   .br-1 {
-    border-radius: 1px !important;
+    border-radius: 2px !important;
     div,
     button,
     input,
     select,
     textarea {
-      border-radius: 1px !important;
+      border-radius: 2px !important;
     }
   }
   .no-shadow {
@@ -76,6 +80,93 @@ html {
   }
   .w-50 {
     width: 50%;
+  }
+  .title,
+  .label {
+    color: #2c3e50;
+  }
+  .truncate {
+    width: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ema-container {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-gap: 1rem;
+  }
+  .ema-grids {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 250px));
+    grid-column-gap: 2rem;
+    grid-row-gap: 1rem;
+    justify-content: start;
+    align-items: center;
+  }
+  .ema-header {
+    display: flex;
+    padding: 0.25rem;
+    align-items: center;
+    border-bottom: 2px solid #999;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+
+    h5 {
+      font-size: 1.35rem;
+      font-weight: bold;
+      width: auto;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      margin-bottom: 0;
+      flex: 1;
+    }
+    .field {
+      margin-bottom: 0;
+      margin: 0 1rem;
+
+      input {
+        border-radius: 1px;
+        font-size: 1rem;
+        font-family: inherit;
+        border: 1px solid #ccc;
+        box-shadow: none;
+        color: #2c3e50;
+      }
+    }
+  }
+  .ema-add-header {
+    background: blueviolet;
+    padding: 0.5rem 1rem;
+    color: ghostwhite;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: inherit;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    h5 {
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+  .ema-btn {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    button {
+      width: 100%;
+      margin-left: auto;
+      padding: 4px 2rem;
+      height: fit-content;
+      font-family: inherit;
+      border-radius: 2px;
+    }
   }
 }
 .iziToast {
@@ -177,7 +268,7 @@ html {
   grid-row-gap: 1rem;
   align-items: start;
   justify-content: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 
   .field {
     margin-bottom: 0;

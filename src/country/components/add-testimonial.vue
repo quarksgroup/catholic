@@ -1,6 +1,8 @@
 <template>
   <div class="add-testimonial">
-    <header>Add Testimonial</header>
+    <header class="ema-add-header">
+      <h5>Add Testimonial</h5>
+    </header>
     <form class="body" @submit.prevent="createTestimonial">
       <b-field label="Testimonial Message:" class="mb-3">
         <textarea
@@ -34,7 +36,7 @@
           </b-select>
         </b-field>
       </div>
-      <div class="btn control">
+      <div class="ema-btn control">
         <button class="br-1 button is-primary" type="submit">Add</button>
       </div>
     </form>
@@ -64,12 +66,7 @@ export default {
   width: 100%;
   min-width: 370px;
   height: fit-content;
-  header {
-    background: blueviolet;
-    padding: 0.5rem;
-    color: ghostwhite;
-    border-radius: 7px 7px 0 0;
-  }
+
   form.body {
     padding: 1rem;
     display: flex;
@@ -93,20 +90,6 @@ export default {
       width: 100%;
     }
 
-    .btn {
-      margin: 0;
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      button {
-        width: fit-content;
-        margin-left: auto;
-        border-radius: 5px;
-        padding: 4px 2rem;
-        height: fit-content;
-        font-family: inherit;
-      }
-    }
   }
 }
 </style>

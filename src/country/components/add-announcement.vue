@@ -1,8 +1,7 @@
 <template>
   <div class="add-announcement">
-    <header>
+    <header class="ema-add-header">
       <h5>Add Announcement</h5>
-      <i class="fa fa-times cursor-pointer" @click="$modal.hide('add-announcement')" />
     </header>
     <form @submit.prevent="createAnnouncement" class="body">
       <div class="control">
@@ -39,7 +38,7 @@
           </b-select>
         </b-field>
       </div>
-      <div class="btn control">
+      <div class="control ema-btn">
         <button type="submit " class="br-1 button is-primary">Add</button>
       </div>
     </form>
@@ -105,14 +104,7 @@ export default {
   width: 100%;
   min-width: 370px;
   height: fit-content;
-  header {
-    background: blueviolet;
-    padding: 0.5rem 1rem;
-    color: ghostwhite;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+
   form.body {
     padding: 1rem;
     textarea::placeholder,
@@ -141,20 +133,6 @@ export default {
       font-size: 15px;
       width: 100%;
       border-radius: 2px;
-    }
-
-    & > .btn {
-      display: flex;
-      justify-content: flex-end;
-      align-items: flex-start;
-      button {
-        width: fit-content;
-        margin-left: auto;
-        padding: 4px 2rem;
-        height: fit-content;
-        font-family: inherit;
-        border-radius: 2px;
-      }
     }
   }
 }

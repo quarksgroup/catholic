@@ -1,30 +1,44 @@
 <template>
-  <div class="announcements-dashboard">
+  <div class="announcements-dashboard ema-container">
     <div class="announcements-body">
-      <header>
-        <h5>Announcements in country</h5>
-
-        <b-button class="is-primary br-1" @click="$modal.show('add-announcement')">
-          <i class="fa fa-plus" /> Add announcement
-        </b-button>
+      <header class="ema-header">
+        <h5 class="title">Announcements in country</h5>
+        <b-field>
+          <b-input
+            :disabled="announcements.length < 1"
+            placeholder="Search title..."
+            type="search"
+            icon-pack="fa"
+            icon="search"
+          />
+        </b-field>
+        <button class="button is-primary br-1" @click="fetchData">Refresh</button>
       </header>
       <div class="page-loading" v-if="state.loading">
         <div class="loading-component loading-primary" />
         <p>Fetching...</p>
       </div>
-      <announcement v-else-if="announcements.length > 0" v-for="i in 5" :key="i" />
-      <div class="page-error" v-else>
+      <div class="ema-grids" v-if="showAnnouncements">
+        <announcement
+          v-for="announcement in announcements"
+          :key="announcement.id"
+          :announcement="announcement"
+        />
+      </div>
+      <div class="page-error" v-else-if="!state.loading">
         <p>There are no announcements available, For now!</p>
       </div>
     </div>
+    <add-announcement />
   </div>
 </template>
 
 <script>
 import announcement from "../components/announcement.vue";
+import addAnnouncement from "../components/add-announcement";
 export default {
   components: {
-    "add-announcement": () => import("../components/add-announcement"),
+    addAnnouncement,
     announcement
   },
   data() {
@@ -36,6 +50,10 @@ export default {
   computed: {
     user() {
       return this.$store.getters.userDetails;
+    },
+    showAnnouncements() {
+      if (this.announcements.length > 0) return true;
+      else return false;
     }
   },
   beforeMount() {
@@ -49,10 +67,10 @@ export default {
     fetchData() {
       this.state.loading = true;
       this.axios
-        .get("/api/testimonial")
+        .get("announcement")
         .then(res => {
-          console.log(res.data);
-          this.testimonials = res.data;
+          this.announcements = res.data.data;
+          console.log(this.announcements);
           this.state.loading = false;
         })
         .catch(err => {
@@ -71,34 +89,6 @@ export default {
 <style lang="scss">
 .announcements-dashboard {
   .announcements-body {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 250px));
-    grid-column-gap: 2rem;
-    grid-row-gap: 1rem;
-    justify-content: center;
-    align-items: center;
-
-    & > header {
-      display: flex;
-      padding: 0.25rem;
-      grid-column: 1/-1;
-      align-items: center;
-      border-bottom: 2px solid #999;
-      justify-content: space-between;
-      flex-wrap: wrap;
-
-      h5 {
-        font-size: 1.35rem;
-        font-weight: bold;
-        width: auto;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-      button {
-        margin-left: 1rem;
-      }
-    }
   }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="testimonial-dashboard">
     <div class="all-testimonials">
-      <header>
+      <header class="ema-header">
         <h5 class="title">All Testimonials</h5>
         <b-field>
           <b-input
@@ -12,7 +12,7 @@
             icon="search"
           />
         </b-field>
-        <button class="button is-primary" @click="refresh">Refresh</button>
+        <button class="button is-primary br-1" @click="refresh">Refresh</button>
       </header>
       <div class="body">
         <div class="page-loading" v-if="state.loading">
@@ -20,15 +20,16 @@
           <p>Fetching...</p>
         </div>
 
-        <div class="page-error" v-if="HideTestimonials">
+        <div class="testionials" v-if="showTestimonials">
+          <testimonial
+            v-for="testimonial in testimonials"
+            :key="testimonial.id"
+            :testimonial="testimonial"
+          />
+        </div>
+        <div class="page-error" v-else-if="!state.loading">
           <p>There are no testimonials available, For now!</p>
         </div>
-        <testimonial
-          v-else
-          v-for="testimonial in testimonials"
-          :key="testimonial.id"
-          :testimonial="testimonial"
-        />
       </div>
     </div>
     <add-testimonial />
@@ -37,9 +38,10 @@
 
 <script>
 import testimonial from "../components/testimonial";
+import addTestimonial from "../components/add-testimonial";
 export default {
   components: {
-    "add-testimonial": () => import("../components/add-testimonial"),
+    addTestimonial,
     testimonial
   },
   data() {
@@ -53,14 +55,9 @@ export default {
     };
   },
   computed: {
-    HideTestimonials() {
-      if (this.state.loading == true)
-        return this.state.is_refreshing == true
-          ? this.testimonials.length < 1
-            ? true
-            : false
-          : false;
-      else return this.testimonials.length < 1;
+    showTestimonials() {
+      if (this.testimonials.length > 0) return true;
+      else return false;
     }
   },
   destroyed() {
@@ -68,7 +65,7 @@ export default {
     this.testimonials = [];
   },
   mounted() {
-    this.loadData();
+    this.fetchData();
   },
   methods: {
     loadData() {
@@ -79,6 +76,7 @@ export default {
         this.state.is_refreshing = false;
       });
     },
+
     getData() {
       const data = require("../../../data/testimonials.json");
       return new Promise(resolve => {
@@ -88,9 +86,23 @@ export default {
         }, 1000);
       });
     },
+    fetchData() {
+      this.state.loading = true;
+      this.axios
+        .get("testimonial")
+        .then(res => {
+          this.testimonials = res.data.data;
+          console.log(this.testimonials);
+          this.state.loading = false;
+        })
+        .catch(err => {
+          this.state.loading = false;
+          if (err) this.$toast.error(err.errorMessage || "");
+        });
+    },
     refresh() {
       this.state.is_refreshing = true;
-      this.loadData();
+      this.fetchData();
     }
   }
 };
@@ -98,41 +110,9 @@ export default {
 
 <style lang="scss">
 .testimonial-dashboard {
-  height: -webkit-fill-available;
+  height: 100%;
   display: grid;
   grid-template-columns: 3fr 1fr;
   column-gap: 1rem;
-
-  .all-testimonials {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    min-width: 450px;
-    & > header {
-      display: flex;
-      justify-content: space-between;
-      border-bottom: 2px solid #999;
-      align-items: center;
-      padding-bottom: 0.3rem;
-      flex-wrap: wrap;
-      h5.title {
-        font-size: 1.45rem;
-        white-space: nowrap;
-        margin-right: 0.5rem;
-        margin-bottom: 0;
-        overflow: hidden;
-        width: auto;
-        text-overflow: ellipsis;
-        flex: 1;
-      }
-      & > .field {
-        margin-bottom: 0;
-        margin-right: 0.5rem;
-        input {
-          font-family: inherit;
-        }
-      }
-    }
-  }
 }
 </style>

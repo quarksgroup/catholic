@@ -1,6 +1,6 @@
 <template>
   <div class="add-account">
-    <header>
+    <header class="ema-add-header">
       <h5>Add an account</h5>
     </header>
     <form @submit.prevent="addAccount">
@@ -8,12 +8,7 @@
         <b-input type="text" placeholder="Enter names..." class="br-1 no-shadow" required />
       </b-field>
       <b-field label="Phone number:">
-        <b-input
-          type="number"
-          placeholder="Enter phone number..."
-          class="br-1 no-shadow"
-          required
-        />
+        <b-input type="number" placeholder="Enter phone number..." class="br-1 no-shadow" required />
       </b-field>
       <div class="select-grids">
         <b-field label="Country:">
@@ -37,9 +32,9 @@
           </b-select>
         </b-field>
       </div>
-      <b-field class="addBtn">
+      <div class="control ema-btn">
         <button class="button is-primary" type="submit">Add</button>
-      </b-field>
+      </div>
     </form>
   </div>
 </template>
@@ -58,17 +53,15 @@ export default {
 <style lang="scss">
 .add-account {
   background: white;
-  border-radius: 5px;
-  box-shadow: 0 1px 6px 0 rgba(32, 33, 36, 0.28);
+  box-shadow: 0 2px 5px 0 rgba(32, 33, 36, 0.25);
+  border-radius: 7px;
+  width: 100%;
+  min-width: 370px;
   max-height: calc(100vh - 70px - 4rem);
   height: 100%;
   overflow-y: auto;
 
   header {
-    background: blueviolet;
-    padding: 0.5rem 1rem;
-    color: white;
-    border-radius: 5px 5px 0 0;
     height: 40px;
   }
   form {
@@ -100,13 +93,6 @@ export default {
     }
     .column {
       margin-bottom: 0 !important;
-    }
-    .addBtn {
-      display: flex;
-
-      button {
-        flex: 1;
-      }
     }
     .select-grids {
       display: grid;

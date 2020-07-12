@@ -3,7 +3,7 @@
     <nav id="country-nav">
       <div class="logo">
         <!-- <img src="../../assets/img/logo.svg" /> -->
-        EmRWANDA
+        EmaRWANDA
       </div>
       <div class="links">
         <ul>

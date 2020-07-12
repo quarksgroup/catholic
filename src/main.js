@@ -33,11 +33,11 @@ Vue.use(VueIziToast, {
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_BASEURL,
 });
+if (sessionStorage.getItem("token"))
+  axiosInstance.defaults.headers.common["Authorization"] =
+    "Bearer " + sessionStorage.getItem("token");
 axiosInstance.interceptors.request.use(
   (config) => {
-    // if (sessionStorage.getItem("token"))
-    //   axiosInstance.defaults.headers.common["Authorization"] =
-    //     "Bearer " + sessionStorage.getItem("token");
     return config;
   },
 
@@ -61,10 +61,11 @@ axiosInstance.interceptors.response.use(
     console.log(error.errorMessage);
     console.log(process.env.VUE_APP_BASEURL);
     try {
-      if (error.response && error.response.status === 401)
-        //logout
-        location.reload();
-      else if (error.response && error.response.status === 404)
+      // if (error.response && error.response.status === 401)
+      //   //logout
+      //   location.reload();
+      // else
+      if (error.response && error.response.status === 404)
         return Promise.reject({
           errorMessage: "can't find the resource you are searching for!",
         });

@@ -42,10 +42,9 @@
 </template>
 
 <script>
+import addAccount from "../components/add-account";
 export default {
-  components: {
-    "add-account": () => import("../components/add-account")
-  },
+  components: { addAccount },
   data() {
     const data = [
       {
@@ -95,7 +94,7 @@ export default {
 <style lang="scss">
 .accounts-dashboard {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 3fr 1fr;
   grid-column-gap: 1rem;
   //100vh - navbar height - country-content padding
   height: calc(100vh - 70px - 4rem);

@@ -1,12 +1,11 @@
 <template>
-  <div class="add-study">
-    <header>
+  <form @submit.prevent="upload" class="add-study">
+    <header class="ema-add-header">
       <h5>Add Inyigisho</h5>
-      <i class="fa fa-times cursor-pointer" @click="$modal.hide('add-study')" />
     </header>
     <div class="body">
       <b-field label="Title:">
-        <b-input placeholder="Inyigisho Title..." class="no-shadow br-1" />
+        <b-input placeholder="Inyigisho Title..." class="no-shadow br-1" autofocus trim required />
       </b-field>
       <b-field label="video:">
         <b-upload
@@ -17,6 +16,7 @@
           class="br-1 w-100"
           type="is-dark"
           v-if="files.length < 1"
+          required
         >
           <section class="section">
             <div class="content has-text-centered">
@@ -34,11 +34,11 @@
           </span>
         </div>
       </b-field>
-      <b-field class="btn">
-        <b-button class="is-primary" @click="upload">Upload</b-button>
+      <b-field class="ema-btn control">
+        <button class="is-primary br-1 button">Upload</button>
       </b-field>
     </div>
-  </div>
+  </form>
 </template>
 
 <script>
@@ -62,14 +62,13 @@ export default {
 
 <style lang="scss">
 .add-study {
-  & > header {
-    background: blueviolet;
-    color: white;
-    padding: 0.5rem 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+  background: white;
+  box-shadow: 0 2px 5px 0 rgba(32, 33, 36, 0.25);
+  border-radius: 7px;
+  width: 100%;
+  min-width: 370px;
+  height: fit-content;
+
   & > .body {
     padding: 1rem;
     input {
@@ -97,10 +96,6 @@ export default {
       border-radius: 1px;
       padding-right: 1rem;
       margin-right: 0;
-    }
-    .btn {
-      display: flex;
-      justify-content: flex-end;
     }
   }
 }
