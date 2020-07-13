@@ -51,7 +51,8 @@ export default {
         loading: true,
         is_refreshing: false
       },
-      testimonials: []
+      testimonials: [],
+      CancelAxios: null
     };
   },
   computed: {
@@ -61,35 +62,22 @@ export default {
     }
   },
   destroyed() {
-    this.state.loading = false;
-    this.testimonials = [];
+    if (typeof this.CancelAxios == "function") this.CancelAxios();
   },
   mounted() {
     this.fetchData();
   },
   methods: {
-    loadData() {
-      this.state.loading = true;
-      this.getData().then(res => {
-        this.testimonials = res;
-        this.state.loading = false;
-        this.state.is_refreshing = false;
-      });
-    },
-
-    getData() {
-      const data = require("../../../data/testimonials.json");
-      return new Promise(resolve => {
-        const timeout = setTimeout(() => {
-          resolve(data);
-          clearTimeout(timeout);
-        }, 1000);
-      });
-    },
     fetchData() {
+      const CancelToken = this.$CancelToken();
+      let TOKEN;
       this.state.loading = true;
       this.axios
-        .get("testimonial")
+        .get("testimonial", {
+          cancelToken: new CancelToken(function executor(token) {
+            TOKEN = token;
+          })
+        })
         .then(res => {
           this.testimonials = res.data.data;
           console.log(this.testimonials);
@@ -97,8 +85,9 @@ export default {
         })
         .catch(err => {
           this.state.loading = false;
-          if (err) this.$toast.error(err.errorMessage || "");
+          if (err.errorMessager) this.$toast.error(err.errorMessage || "");
         });
+      this.CancelAxios = TOKEN;
     },
     refresh() {
       this.state.is_refreshing = true;

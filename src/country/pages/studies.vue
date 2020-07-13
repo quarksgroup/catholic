@@ -38,7 +38,8 @@ export default {
   data() {
     return {
       state: { loading: true, is_refreshing: false },
-      studies: []
+      studies: [],
+      CancelAxios: null
     };
   },
   computed: {
@@ -50,11 +51,20 @@ export default {
   mounted() {
     this.fetchData();
   },
+  destroyed() {
+    if (typeof this.CancelAxios == "function") this.CancelAxios();
+  },
   methods: {
     fetchData() {
+      const CancelToken = this.$CancelToken();
+      let TOKEN;
       this.state.loading = true;
       this.axios
-        .get("inyigisho")
+        .get("inyigisho", {
+          cancelToken: new CancelToken(function executor(token) {
+            TOKEN = token;
+          })
+        })
         .then(res => {
           this.studies = res.data.data;
           console.log(this.studies);
@@ -62,8 +72,9 @@ export default {
         })
         .catch(err => {
           this.state.loading = false;
-          if (err) this.$toast.error(err.errorMessage || "");
+          if (err.errorMessager) this.$toast.error(err.errorMessage || "");
         });
+      this.CancelAxios = TOKEN;
     }
   }
 };

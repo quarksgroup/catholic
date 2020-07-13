@@ -97,7 +97,7 @@ export default {
   grid-template-columns: 3fr 1fr;
   grid-column-gap: 1rem;
   //100vh - navbar height - country-content padding
-  height: calc(100vh - 70px - 4rem);
+  min-height: calc(100vh - 70px - 4rem);
   grid-template-rows: max-content;
 
   .all-accounts {
@@ -105,7 +105,6 @@ export default {
     border-radius: 5px;
     background: white;
     box-shadow: 1px 1px 6px 0 rgba(32, 33, 36, 0.28);
-    max-height: calc(100vh - 70px - 4rem);
     height: fit-content;
     header {
       background: blueviolet;

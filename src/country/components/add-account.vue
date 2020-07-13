@@ -13,22 +13,30 @@
       <div class="select-grids">
         <b-field label="Country:">
           <b-select placeholder="select country..." class="br-1" required>
-            <option value="hello">hello</option>
+            <option
+              :value="country"
+              v-for="country in countryOptions"
+              :key="country.id"
+            >{{country.name}}</option>
           </b-select>
         </b-field>
         <b-field label="Province:">
           <b-select placeholder="select province..." class="br-1" required>
-            <option value="hello">hello</option>
+            <option
+              :value="province"
+              v-for="province in provinceOptions"
+              :key="province.id"
+            >{{province.name}}</option>
           </b-select>
         </b-field>
         <b-field label="Sector:">
           <b-select placeholder="select sector..." class="br-1" required>
-            <option value="hello">hello</option>
+            <option :value="sector" v-for="sector in sectorOptions" :key="sector.id">{{sector.name}}</option>
           </b-select>
         </b-field>
         <b-field label="Groupe de priere:">
           <b-select placeholder="select Gr.Priere..." class="br-1" required>
-            <option value="hello">hello</option>
+            <option :value="group" v-for="group in groupOptions" :key="group.id">{{group.name}}</option>
           </b-select>
         </b-field>
       </div>
@@ -41,7 +49,24 @@
 
 <script>
 export default {
-  name: "addAccountComponent",
+  name: "add-account-component",
+  computed: {
+    location() {
+      return this.$store.getters.location;
+    },
+    countryOptions() {
+      return this.$countryOptions();
+    },
+    provinceOptions() {
+      return this.$provinceOptions();
+    },
+    sectorOptions() {
+      return this.$sectorOptions();
+    },
+    groupOptions() {
+      return this.$groupOptions();
+    }
+  },
   methods: {
     addAccount() {
       alert("account created");
@@ -57,8 +82,7 @@ export default {
   border-radius: 7px;
   width: 100%;
   min-width: 370px;
-  max-height: calc(100vh - 70px - 4rem);
-  height: 100%;
+  height: fit-content;
   overflow-y: auto;
 
   header {
@@ -66,7 +90,7 @@ export default {
   }
   form {
     padding: 1.5rem 1rem 2rem;
-    height: calc(100% - 40px);
+    min-height: calc(100% - 40px);
     overflow-y: auto;
     .select,
     .select select {

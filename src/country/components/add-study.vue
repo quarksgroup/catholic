@@ -5,7 +5,7 @@
     </header>
     <div class="body">
       <b-field label="Title:">
-        <b-input placeholder="Inyigisho Title..." class="no-shadow br-1" autofocus trim required />
+        <b-input placeholder="Inyigisho Title..." class="no-shadow br-1" trim required />
       </b-field>
       <b-field label="video:">
         <b-upload
@@ -23,7 +23,7 @@
               <p>
                 <b-icon icon="upload" pack="fa" size="is-large"></b-icon>
               </p>
-              <p>Drop your files here or click to upload</p>
+              <p>Drop your files or click here to select files to upload</p>
             </div>
           </section>
         </b-upload>

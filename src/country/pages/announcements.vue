@@ -44,7 +44,8 @@ export default {
   data() {
     return {
       announcements: [],
-      state: { loading: true, error: "" }
+      state: { loading: true, error: "" },
+      CancelAxios: null
     };
   },
   computed: {
@@ -58,16 +59,21 @@ export default {
   },
   beforeMount() {
     this.fetchData();
-    console.log(this.user);
   },
   destroyed() {
-    this.$delete(this.announcements);
+    if (typeof this.CancelAxios == "function") this.CancelAxios();
   },
   methods: {
     fetchData() {
+      const CancelToken = this.$CancelToken();
+      let TOKEN;
       this.state.loading = true;
       this.axios
-        .get("announcement")
+        .get("announcement", {
+          cancelToken: new CancelToken(function executor(token) {
+            TOKEN = token;
+          })
+        })
         .then(res => {
           this.announcements = res.data.data;
           console.log(this.announcements);
@@ -75,8 +81,9 @@ export default {
         })
         .catch(err => {
           this.state.loading = false;
-          if (err) this.$toast.error(err.errorMessage || "");
+          if (err.errorMessager) this.$toast.error(err.errorMessage || "");
         });
+      this.CancelAxios = TOKEN;
     },
     clear() {
       this.state.loading = false;

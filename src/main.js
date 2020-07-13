@@ -33,11 +33,12 @@ Vue.use(VueIziToast, {
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_BASEURL,
 });
-if (sessionStorage.getItem("token"))
-  axiosInstance.defaults.headers.common["Authorization"] =
-    "Bearer " + sessionStorage.getItem("token");
+
 axiosInstance.interceptors.request.use(
   (config) => {
+    if (sessionStorage.getItem("token"))
+      config.headers["Authorization"] =
+        "Bearer " + sessionStorage.getItem("token");
     return config;
   },
 
@@ -73,6 +74,7 @@ axiosInstance.interceptors.response.use(
         return Promise.reject({
           errorMessage: "Your connection is weak! try again",
         });
+      else if (axios.isCancel(error)) return;
       else
         return Promise.reject({
           errorMessage: error.response.data.message || error,
@@ -86,8 +88,24 @@ axiosInstance.interceptors.response.use(
 );
 Vue.use(VueAxios, axiosInstance);
 
+Vue.prototype.$countryOptions = () => {
+  let location = store.getters.location;
+  return location.countries || [];
+};
+Vue.prototype.$provinceOptions = () => {
+  let location = store.getters.location;
+  return location.provinces || [];
+};
+Vue.prototype.$sectorOptions = () => {
+  let location = store.getters.location;
+  return location.sectors || [];
+};
+Vue.prototype.$groupOptions = () => {
+  let location = store.getters.location;
+  return location.groups || [];
+};
+Vue.prototype.$CancelToken = () => axios.CancelToken;
 Vue.config.productionTip = false;
-
 new Vue({
   router,
   store,
