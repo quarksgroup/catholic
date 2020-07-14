@@ -92,17 +92,40 @@ Vue.prototype.$countryOptions = () => {
   let location = store.getters.location;
   return location.countries || [];
 };
-Vue.prototype.$provinceOptions = () => {
+Vue.prototype.$provinceOptions = (country) => {
   let location = store.getters.location;
-  return location.provinces || [];
+  if (country && country.id)
+    return (
+      location.provinces.filter(
+        (province) =>
+          province.country.name == country.name &&
+          province.country.id == country.id
+      ) || []
+    );
+  else return [];
 };
-Vue.prototype.$sectorOptions = () => {
+Vue.prototype.$sectorOptions = (province) => {
   let location = store.getters.location;
-  return location.sectors || [];
+  if (province && province.id)
+    return (
+      location.sectors.filter(
+        (sector) =>
+          sector.province.name == province.name &&
+          sector.province.id == province.id
+      ) || []
+    );
+  else return [];
 };
-Vue.prototype.$groupOptions = () => {
+Vue.prototype.$groupOptions = (sector) => {
   let location = store.getters.location;
-  return location.groups || [];
+  if (sector && sector.id)
+    return (
+      location.groups.filter(
+        (group) =>
+          group.sector.name == sector.name && group.sector.id == sector.id
+      ) || []
+    );
+  else return [];
 };
 Vue.prototype.$CancelToken = () => axios.CancelToken;
 Vue.config.productionTip = false;

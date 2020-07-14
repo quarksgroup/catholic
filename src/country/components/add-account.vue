@@ -12,7 +12,13 @@
       </b-field>
       <div class="select-grids">
         <b-field label="Country:">
-          <b-select placeholder="select country..." class="br-1" required>
+          <b-select
+            placeholder="select country..."
+            class="br-1"
+            required
+            v-model="country"
+            :disabled="countryOptions.length < 2"
+          >
             <option
               :value="country"
               v-for="country in countryOptions"
@@ -21,7 +27,13 @@
           </b-select>
         </b-field>
         <b-field label="Province:">
-          <b-select placeholder="select province..." class="br-1" required>
+          <b-select
+            placeholder="select province..."
+            class="br-1"
+            required
+            v-model="province"
+            :disabled="provinceOptions.length < 2"
+          >
             <option
               :value="province"
               v-for="province in provinceOptions"
@@ -30,12 +42,24 @@
           </b-select>
         </b-field>
         <b-field label="Sector:">
-          <b-select placeholder="select sector..." class="br-1" required>
+          <b-select
+            placeholder="select sector..."
+            class="br-1"
+            required
+            v-model="sector"
+            :disabled="sectorOptions.length < 2"
+          >
             <option :value="sector" v-for="sector in sectorOptions" :key="sector.id">{{sector.name}}</option>
           </b-select>
         </b-field>
         <b-field label="Groupe de priere:">
-          <b-select placeholder="select Gr.Priere..." class="br-1" required>
+          <b-select
+            placeholder="select Gr.Priere..."
+            class="br-1"
+            required
+            v-model="group"
+            :disabled="groupOptions.length < 2"
+          >
             <option :value="group" v-for="group in groupOptions" :key="group.id">{{group.name}}</option>
           </b-select>
         </b-field>
@@ -50,21 +74,47 @@
 <script>
 export default {
   name: "add-account-component",
+  data() {
+    return {
+      country: { name: "all", id: null },
+      province: { name: "all", id: null },
+      sector: { name: "all", id: null },
+      group: { name: "all", id: null },
+      default: { name: "all", id: null }
+    };
+  },
   computed: {
     location() {
       return this.$store.getters.location;
     },
     countryOptions() {
-      return this.$countryOptions();
+      return [this.default, this.$countryOptions()].flat();
     },
     provinceOptions() {
-      return this.$provinceOptions();
+      return [this.default, this.$provinceOptions(this.country)].flat();
     },
     sectorOptions() {
-      return this.$sectorOptions();
+      return [this.default, this.$sectorOptions(this.province)].flat();
     },
     groupOptions() {
-      return this.$groupOptions();
+      return [this.default, this.$groupOptions(this.sector)].flat();
+    }
+  },
+  watch: {
+    country() {
+      handler: {
+        this.$set(this, "province", this.default);
+      }
+    },
+    province() {
+      handler: {
+        this.$set(this, "sector", this.default);
+      }
+    },
+    sector() {
+      handler: {
+        this.$set(this, "group", this.default);
+      }
     }
   },
   methods: {

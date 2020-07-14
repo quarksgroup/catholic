@@ -37,12 +37,22 @@ export default {
     h1 {
       color: white;
       font-size: 2.5rem;
+      animation: scale-animation normal;
+      animation-duration: 1s;
     }
     .loading-light {
-      width: 4rem;
-      height: 4rem;
+      width: 3rem;
+      height: 3rem;
       margin: 3rem;
     }
+  }
+}
+@keyframes scale-animation {
+  0% {
+    transform: scale(0.5);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 </style>

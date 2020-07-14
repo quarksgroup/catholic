@@ -83,6 +83,7 @@ export default new Vuex.Store({
           state.location.sectors = await GetSectors;
           state.location.groups = await GetGroups;
           state.AppLoading = false;
+          console.log(state.location);
         } catch {
           state.AppLoading = false;
         }

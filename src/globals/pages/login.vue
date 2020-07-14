@@ -75,6 +75,7 @@ export default {
         .then(res => {
           sessionStorage.setItem("token", res.data.token);
           this.$store.dispatch("SETUSER", res.data.user);
+          this.$store.dispatch("STARTUP");
           this.$router.push("/country");
           this.state.loading = false;
         })
