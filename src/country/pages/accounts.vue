@@ -1,5 +1,5 @@
 <template>
-  <div class="accounts-dashboard">
+  <div class="accounts-dashboard ema-container">
     <div class="all-accounts">
       <header>
         <h5>Table of accounts</h5>
@@ -43,6 +43,7 @@
 
 <script>
 import addAccount from "../components/add-account";
+import axios from "axios";
 export default {
   components: { addAccount },
   data() {
@@ -87,19 +88,15 @@ export default {
     return {
       data
     };
+  },
+  mounted() {
+    // console.log(this.$CancelToken());
   }
 };
 </script>
 
 <style lang="scss">
 .accounts-dashboard {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  grid-column-gap: 1rem;
-  //100vh - navbar height - country-content padding
-  min-height: calc(100vh - 70px - 4rem);
-  grid-template-rows: max-content;
-
   .all-accounts {
     grid-column: 1;
     border-radius: 5px;

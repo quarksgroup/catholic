@@ -4,68 +4,110 @@
       <h5>Add an account</h5>
     </header>
     <form @submit.prevent="addAccount">
-      <b-field label="Names:">
-        <b-input type="text" placeholder="Enter names..." class="br-1 no-shadow" required />
-      </b-field>
-      <b-field label="Phone number:">
-        <b-input type="number" placeholder="Enter phone number..." class="br-1 no-shadow" required />
-      </b-field>
-      <div class="select-grids">
-        <b-field label="Country:">
-          <b-select
-            placeholder="select country..."
-            class="br-1"
+      <div :class="{'blur':state.loading}">
+        <b-field label="Names:">
+          <b-input
+            type="text"
+            placeholder="Enter names..."
+            validation-message=" "
+            class="br-1 no-shadow"
             required
-            v-model="country"
-            :disabled="countryOptions.length < 2"
-          >
-            <option
-              :value="country"
-              v-for="country in countryOptions"
-              :key="country.id"
-            >{{country.name}}</option>
-          </b-select>
+            v-model="name"
+          />
         </b-field>
-        <b-field label="Province:">
-          <b-select
-            placeholder="select province..."
-            class="br-1"
+
+        <b-field label="username:">
+          <b-input
+            type="text"
+            placeholder="Enter username..."
+            validation-message=" "
+            class="br-1 no-shadow"
             required
-            v-model="province"
-            :disabled="provinceOptions.length < 2"
-          >
-            <option
-              :value="province"
-              v-for="province in provinceOptions"
-              :key="province.id"
-            >{{province.name}}</option>
-          </b-select>
+            v-model="username"
+          />
         </b-field>
-        <b-field label="Sector:">
-          <b-select
-            placeholder="select sector..."
-            class="br-1"
+
+        <b-field label="Phone number:">
+          <b-input
+            type="number"
+            placeholder="Enter phone number..."
+            class="br-1 no-shadow"
+            validation-message=" "
             required
-            v-model="sector"
-            :disabled="sectorOptions.length < 2"
-          >
-            <option :value="sector" v-for="sector in sectorOptions" :key="sector.id">{{sector.name}}</option>
-          </b-select>
+            v-model="phone"
+          />
         </b-field>
-        <b-field label="Groupe de priere:">
-          <b-select
-            placeholder="select Gr.Priere..."
-            class="br-1"
-            required
-            v-model="group"
-            :disabled="groupOptions.length < 2"
-          >
-            <option :value="group" v-for="group in groupOptions" :key="group.id">{{group.name}}</option>
-          </b-select>
-        </b-field>
+
+        <div class="select-grids">
+          <b-field label="Country:">
+            <b-select
+              placeholder="select country..."
+              class="br-1"
+              v-model="country"
+              validation-message=" "
+              :disabled="countryOptions.length < 2"
+            >
+              <option
+                :value="country"
+                v-for="country in countryOptions"
+                :key="country.id"
+              >{{country.name}}</option>
+            </b-select>
+          </b-field>
+
+          <b-field label="Province:">
+            <b-select
+              placeholder="select province..."
+              class="br-1"
+              v-model="province"
+              validation-message=" "
+              :disabled="provinceOptions.length < 2"
+            >
+              <option
+                :value="province"
+                v-for="province in provinceOptions"
+                :key="province.id"
+              >{{province.name}}</option>
+            </b-select>
+          </b-field>
+
+          <b-field label="Sector:">
+            <b-select
+              placeholder="select sector..."
+              class="br-1"
+              v-model="sector"
+              validation-message=" "
+              :disabled="sectorOptions.length < 2"
+            >
+              <option
+                :value="sector"
+                v-for="sector in sectorOptions"
+                :key="sector.id"
+              >{{sector.name}}</option>
+            </b-select>
+          </b-field>
+
+          <b-field label="Groupe de priere:">
+            <b-select
+              placeholder="select Gr.Priere..."
+              class="br-1"
+              v-model="group"
+              validation-message=" "
+              :disabled="groupOptions.length < 2"
+            >
+              <option :value="group" v-for="group in groupOptions" :key="group.id">{{group.name}}</option>
+            </b-select>
+          </b-field>
+        </div>
+
+        <div class="control ema-btn">
+          <button class="button is-primary" type="submit">Add</button>
+        </div>
       </div>
-      <div class="control ema-btn">
-        <button class="button is-primary" type="submit">Add</button>
+      <div class="loading control" v-if="state.loading">
+        <span @click="CancelRequestFunction()">&times;</span>
+        <div class="loading-light"></div>
+        <p>adding user</p>
       </div>
     </form>
   </div>
@@ -76,11 +118,18 @@ export default {
   name: "add-account-component",
   data() {
     return {
+      state: {
+        loading: false
+      },
+      name: "",
+      username: "",
+      phone: "",
       country: { name: "all", id: null },
       province: { name: "all", id: null },
       sector: { name: "all", id: null },
       group: { name: "all", id: null },
-      default: { name: "all", id: null }
+      default: { name: "all", id: null },
+      CancelRequest: null
     };
   },
   computed: {
@@ -88,6 +137,7 @@ export default {
       return this.$store.getters.location;
     },
     countryOptions() {
+      console.log(this.location);
       return [this.default, this.$countryOptions()].flat();
     },
     provinceOptions() {
@@ -117,9 +167,59 @@ export default {
       }
     }
   },
+  mounted() {},
+  beforeDestroy() {
+    this.CancelRequestFunction();
+  },
   methods: {
     addAccount() {
-      alert("account created");
+      this.state.loading = true;
+      const CancelToken = this.$CancelToken();
+      let CANCEL_TOKEN;
+      let reqData = {
+        name: this.name,
+        username: this.username,
+        phone: this.phone,
+        country_id: this.country.id,
+        province_id: this.province.id,
+        sector_id: this.sector.id,
+        group_id: this.group.id
+      };
+      Object.keys(reqData).map(
+        key => reqData[key] == null && delete reqData[key]
+      );
+      this.axios
+        .post("user", reqData, {
+          cancelToken: new CancelToken(function executor(token) {
+            CANCEL_TOKEN = token;
+          })
+        })
+        .then(res => {
+          console.log(res);
+          this.state.loading = false;
+          this.$toast.success(res.data.message);
+          this.clear();
+        })
+        .catch(err => {
+          this.state.loading = false;
+          console.log(err);
+          if (err.errorMessage) this.$toast.error(err.errorMessage);
+        });
+      this.CancelRequest = CANCEL_TOKEN;
+    },
+    CancelRequestFunction() {
+      if (typeof this.CancelRequest == "function") this.CancelRequest();
+      this.state.loading = false;
+    },
+    clear() {
+      this.name = "";
+      this.username = "";
+      this.phone = "";
+      this.country = this.default;
+      this.province = this.default;
+      this.sector = this.default;
+      this.group = this.default;
+      this.CancelRequest = null;
     }
   }
 };
@@ -139,9 +239,45 @@ export default {
     height: 40px;
   }
   form {
-    padding: 1.5rem 1rem 2rem;
+    padding: 0.5rem 1rem 1.5rem;
     min-height: calc(100% - 40px);
     overflow-y: auto;
+    position: relative;
+    .blur {
+      filter: blur(5px);
+      transition: all 0.3s ease;
+    }
+    .loading {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.5);
+      animation: scale-animation 0.3s;
+      div {
+        width: 2rem;
+        height: 2rem;
+      }
+      p {
+        font-size: 1.15rem;
+        color: white;
+        margin-top: 1rem;
+      }
+      span {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 1.75rem;
+        color: white;
+        margin: 0.5rem 0.75rem;
+        cursor: pointer;
+      }
+    }
     .select,
     .select select {
       width: 100%;
@@ -156,9 +292,6 @@ export default {
         margin-bottom: 0.25em;
       }
     }
-    .field:not(:last-child) {
-      margin-bottom: 1.5rem;
-    }
 
     input::placeholder,
     .select.is-empty select {
@@ -168,19 +301,7 @@ export default {
     .column {
       margin-bottom: 0 !important;
     }
-    .select-grids {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      grid-column-gap: 1rem;
-      grid-row-gap: 1rem;
-      align-items: start;
-      justify-content: center;
-      margin-bottom: 2rem;
-
-      .field {
-        margin-bottom: 0;
-      }
-    }
+  
   }
 }
 .add-account,
@@ -197,6 +318,14 @@ form {
     background-color: #777777;
     outline: 1px solid slategrey;
     border-radius: 2px;
+  }
+}
+@keyframes scale-animation {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 </style>

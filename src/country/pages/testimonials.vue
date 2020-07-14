@@ -1,5 +1,5 @@
 <template>
-  <div class="testimonial-dashboard">
+  <div class="testimonial-dashboard ema-container">
     <div class="all-testimonials">
       <header class="ema-header">
         <h5 class="title">All Testimonials</h5>
@@ -70,12 +70,12 @@ export default {
   methods: {
     fetchData() {
       const CancelToken = this.$CancelToken();
-      let TOKEN;
+      let CANCEL_TOKEN;
       this.state.loading = true;
       this.axios
         .get("testimonial", {
           cancelToken: new CancelToken(function executor(token) {
-            TOKEN = token;
+            CANCEL_TOKEN = token;
           })
         })
         .then(res => {
@@ -87,7 +87,7 @@ export default {
           this.state.loading = false;
           if (err.errorMessager) this.$toast.error(err.errorMessage || "");
         });
-      this.CancelAxios = TOKEN;
+         this.CancelAxios = CANCEL_TOKEN;
     },
     refresh() {
       this.state.is_refreshing = true;
@@ -96,12 +96,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss">
-.testimonial-dashboard {
-  height: 100%;
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  column-gap: 1rem;
-}
-</style>

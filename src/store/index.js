@@ -58,7 +58,7 @@ export default new Vuex.Store({
       sectors: [],
       groups: [],
     },
-    AppLoading: true,
+    AppLoading: false,
   },
   mutations: {
     INITIALIZE: async (state) => {

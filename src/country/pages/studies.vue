@@ -55,14 +55,14 @@ export default {
     if (typeof this.CancelAxios == "function") this.CancelAxios();
   },
   methods: {
-    fetchData() {
+    async fetchData() {
       const CancelToken = this.$CancelToken();
-      let TOKEN;
+      let CANCEL_TOKEN;
       this.state.loading = true;
       this.axios
         .get("inyigisho", {
           cancelToken: new CancelToken(function executor(token) {
-            TOKEN = token;
+            CANCEL_TOKEN = token;
           })
         })
         .then(res => {
@@ -74,15 +74,8 @@ export default {
           this.state.loading = false;
           if (err.errorMessager) this.$toast.error(err.errorMessage || "");
         });
-      this.CancelAxios = TOKEN;
+      this.CancelAxios = CANCEL_TOKEN;
     }
   }
 };
 </script>
-
-<style lang="scss">
-.studies-dashboard {
-  .studies {
-  }
-}
-</style>

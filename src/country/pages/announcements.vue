@@ -66,12 +66,12 @@ export default {
   methods: {
     fetchData() {
       const CancelToken = this.$CancelToken();
-      let TOKEN;
+      let CANCEL_TOKEN;
       this.state.loading = true;
       this.axios
         .get("announcement", {
           cancelToken: new CancelToken(function executor(token) {
-            TOKEN = token;
+            CANCEL_TOKEN = token;
           })
         })
         .then(res => {
@@ -83,7 +83,7 @@ export default {
           this.state.loading = false;
           if (err.errorMessager) this.$toast.error(err.errorMessage || "");
         });
-      this.CancelAxios = TOKEN;
+      this.CancelAxios = CANCEL_TOKEN;
     },
     clear() {
       this.state.loading = false;
@@ -92,10 +92,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss">
-.announcements-dashboard {
-  .announcements-body {
-  }
-}
-</style>
