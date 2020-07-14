@@ -1,77 +1,105 @@
 <template>
   <div class="add-announcement">
     <header class="ema-add-header">
-      <h5>Add Announcement</h5>
+      <h5>Add an announcement</h5>
     </header>
-    <form @submit.prevent="createAnnouncement" class="body">
-      <div class="control">
-        <b-field label="Announcement:">
-          <textarea
-            name="announcement_message"
-            id="announcement-message"
-            rows="1"
-            cols="1"
-            placeholder="Write announcement here..."
+    <form @submit.prevent="addAnnouncement">
+      <div :class="{'blur':state.loading}">
+        <b-field label="Announcement Title:">
+          <b-input
+            type="text"
+            placeholder=" "
+            validation-message=" "
+            class="br-1 no-shadow"
             required
+            v-model="title"
           />
         </b-field>
+
+        <div class="control">
+          <b-field label="Announcement Message:">
+            <b-input
+              name="announcement_message"
+              id="announcement-message"
+              placeholder="Write announcement here..."
+              required
+              type="textarea"
+              class="br-1 no-shadow"
+              v-model="message"
+            />
+          </b-field>
+        </div>
+
+        <div class="select-grids">
+          <b-field label="Country:">
+            <b-select
+              placeholder="select country..."
+              class="br-1"
+              v-model="country"
+              validation-message=" "
+              :disabled="countryOptions.length < 2"
+            >
+              <option
+                :value="country"
+                v-for="country in countryOptions"
+                :key="country.id"
+              >{{country.name}}</option>
+            </b-select>
+          </b-field>
+
+          <b-field label="Province:">
+            <b-select
+              placeholder="select province..."
+              class="br-1"
+              v-model="province"
+              validation-message=" "
+              :disabled="provinceOptions.length < 2"
+            >
+              <option
+                :value="province"
+                v-for="province in provinceOptions"
+                :key="province.id"
+              >{{province.name}}</option>
+            </b-select>
+          </b-field>
+
+          <b-field label="Sector:">
+            <b-select
+              placeholder="select sector..."
+              class="br-1"
+              v-model="sector"
+              validation-message=" "
+              :disabled="sectorOptions.length < 2"
+            >
+              <option
+                :value="sector"
+                v-for="sector in sectorOptions"
+                :key="sector.id"
+              >{{sector.name}}</option>
+            </b-select>
+          </b-field>
+
+          <b-field label="Groupe de priere:">
+            <b-select
+              placeholder="select Gr.Priere..."
+              class="br-1"
+              v-model="group"
+              validation-message=" "
+              :disabled="groupOptions.length < 2"
+            >
+              <option :value="group" v-for="group in groupOptions" :key="group.id">{{group.name}}</option>
+            </b-select>
+          </b-field>
+        </div>
+
+        <div class="control ema-btn">
+          <button class="button is-primary" type="submit">Add</button>
+        </div>
       </div>
-      <div class="select-grids">
-        <b-field label="Country:">
-          <b-select
-            placeholder="select country..."
-            class="br-1"
-            required
-            v-model="country"
-            :disabled="countryOptions.length < 2"
-          >
-            <option
-              :value="country"
-              v-for="country in countryOptions"
-              :key="country.id"
-            >{{country.name}}</option>
-          </b-select>
-        </b-field>
-        <b-field label="Province:">
-          <b-select
-            placeholder="select province..."
-            class="br-1"
-            required
-            v-model="province"
-            :disabled="provinceOptions.length < 2"
-          >
-            <option
-              :value="province"
-              v-for="province in provinceOptions"
-              :key="province.id"
-            >{{province.name}}</option>
-          </b-select>
-        </b-field>
-        <b-field label="Sector:">
-          <b-select
-            placeholder="select sector..."
-            class="br-1"
-            required
-            v-model="sector"
-            :disabled="sectorOptions.length < 2"
-          >
-            <option :value="sector" v-for="sector in sectorOptions" :key="sector.id">{{sector.name}}</option>
-          </b-select>
-        </b-field>
-        <b-field label="Groupe de priere:">
-          <b-select
-            placeholder="select Gr.Priere..."
-            class="br-1"
-            required
-            v-model="group"
-            :disabled="groupOptions.length < 2"
-          >
-            <option :value="group" v-for="group in groupOptions" :key="group.id">{{group.name}}</option>
-          </b-select>
-        </b-field>
-      </div>
-      <div class="control ema-btn">
-        <button type="submit " class="br-1 button is-primary">Add</button>
+      <div class="loading control" v-if="state.loading">
+        <span @click="CancelRequestFunction()">&times;</span>
+        <div class="loading-light"></div>
+        <p>creating announcement</p>
       </div>
     </form>
   </div>
@@ -79,17 +107,20 @@
 
 <script>
 export default {
+  name: "add-announcement-component",
   data() {
     return {
-      state: { loading: false, error: null },
-      options: ["Country", "Diocese", "paroisse"],
+      state: {
+        loading: false
+      },
       title: "",
       message: "",
       country: { name: "all", id: null },
       province: { name: "all", id: null },
       sector: { name: "all", id: null },
       group: { name: "all", id: null },
-      default: { name: "all", id: null }
+      default: { name: "all", id: null },
+      CancelRequest: null
     };
   },
   computed: {
@@ -97,6 +128,7 @@ export default {
       return this.$store.getters.location;
     },
     countryOptions() {
+      console.log(this.location);
       return [this.default, this.$countryOptions()].flat();
     },
     provinceOptions() {
@@ -126,27 +158,49 @@ export default {
       }
     }
   },
+  mounted() {},
+  beforeDestroy() {
+    this.CancelRequestFunction();
+  },
   methods: {
-    createAnnouncement() {
+    addAnnouncement() {
       this.state.loading = true;
-      const reqData = {
+      const CancelToken = this.$CancelToken();
+      let CANCEL_TOKEN;
+      let reqData = {
         title: this.title,
         body: this.message,
         country_id: this.country.id,
         province_id: this.province.id,
         sector_id: this.sector.id,
-        groupe_de_priere_id: this.group.id
+        group_id: this.group.id
       };
+      Object.keys(reqData).map(
+        key => reqData[key] == null && delete reqData[key]
+      );
       this.axios
-        .post("announcement", reqData)
+        .post("announcement", reqData, {
+          cancelToken: new CancelToken(function executor(token) {
+            CANCEL_TOKEN = token;
+          })
+        })
         .then(res => {
-          console.log(res.data);
+          console.log(res);
+          this.state.loading = false;
+          this.$toast.success(res.data.message);
           this.clear();
+          this.$emit("created");
         })
         .catch(err => {
           this.state.loading = false;
-          if (err) this.$toast(err.errorMessage || "");
+          console.log(err);
+          if (err.errorMessage) this.$toast.error(err.errorMessage);
         });
+      this.CancelRequest = CANCEL_TOKEN;
+    },
+    CancelRequestFunction() {
+      if (typeof this.CancelRequest == "function") this.CancelRequest();
+      this.state.loading = false;
     },
     clear() {
       this.title = "";
@@ -155,8 +209,7 @@ export default {
       this.province = this.default;
       this.sector = this.default;
       this.group = this.default;
-      this.state.loading = false;
-      this.state.error = null;
+      this.CancelRequest = null;
     }
   }
 };
@@ -170,36 +223,103 @@ export default {
   width: 100%;
   min-width: 370px;
   height: fit-content;
+  overflow-y: auto;
 
-  form.body {
-    padding: 1rem;
-    textarea::placeholder,
-    .select.is-empty select {
-      font-size: 15px;
+  header {
+    height: 40px;
+  }
+  form {
+    padding: 0.5rem 1rem 1.5rem;
+    min-height: calc(100% - 40px);
+    overflow-y: auto;
+    position: relative;
+    .blur {
+      filter: blur(5px);
+      transition: all 0.3s ease;
     }
-
-    label {
-      margin-bottom: 3px;
-      font-size: 15.5px;
+    .loading {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.5);
+      animation: opacity-animation 0.3s;
+      div {
+        width: 2rem;
+        height: 2rem;
+      }
+      p {
+        font-size: 1.15rem;
+        color: white;
+        margin-top: 1rem;
+      }
+      span {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 1.75rem;
+        color: white;
+        margin: 0.5rem 0.75rem;
+        cursor: pointer;
+      }
+    }
+    .select,
+    .select select {
+      width: 100%;
+    }
+    .label {
       width: 100%;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+
+      &:not(:last-child) {
+        margin-bottom: 0.25em;
+      }
     }
     textarea {
-      width: 100% !important;
-      padding: 0.5rem;
-      min-height: 200px;
-      max-height: 200px;
-    }
-    select,
-    textarea {
-      border-color: #ccc;
       font-family: inherit;
-      font-size: 15px;
-      width: 100%;
-      border-radius: 2px;
+      font-size: 0.85rem;
+      color: inherit;
     }
+
+    input::placeholder,
+    .select.is-empty select {
+      color: #9e9c9c !important;
+      font-size: 15px;
+    }
+    .column {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+.add-announcement,
+form {
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #777777;
+    outline: 1px solid slategrey;
+    border-radius: 2px;
+  }
+}
+@keyframes opacity-animation {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 </style>

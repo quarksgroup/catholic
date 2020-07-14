@@ -47,7 +47,8 @@ html {
     }
   }
   .no-shadow {
-    input {
+    input,
+    textarea {
       box-shadow: none !important;
     }
   }
@@ -98,7 +99,7 @@ html {
   }
   .ema-grids {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 250px));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 290px));
     grid-column-gap: 2rem;
     grid-row-gap: 1rem;
     justify-content: start;

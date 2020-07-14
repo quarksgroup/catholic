@@ -5,12 +5,11 @@
     </div>
     <div class="description">
       <div class="study-title">
-        <h5>Inyigisho ya {{props.i}}</h5>
+        <h5>{{props.video.title}}</h5>
       </div>
       <div class="study-subtitle">
-        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ex, nobis. adipisicing elit. Ex, nobis.</p>
+        <p>{{props.video.body}}</p>
       </div>
-      <button class="button is-primary br-1">Read more...</button>
     </div>
   </div>
 </template>
@@ -46,16 +45,16 @@
     .study-title {
       margin-bottom: 0.65rem;
       h5 {
-        font-size: 1.25rem;
+        font-size: 1.15rem;
         font-weight: bold;
       }
     }
     .study-subtitle {
       margin-bottom: 0.75rem;
       p {
-        color: #525252;
-        line-height: 130%;
-        font-size: 1rem;
+        color: #525252d6;
+        line-height: 140%;
+        font-size: 0.85rem;
       }
     }
     button {

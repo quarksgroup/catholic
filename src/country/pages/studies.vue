@@ -19,7 +19,7 @@
         <p>Fetching studies...</p>
       </div>
       <div class="ema-grids" v-if="showStudies">
-        <study v-for="study in studies" :key="study.id" :study="study" />
+        <video-card v-for="study in studies" :key="study.id" :video="study" />
       </div>
       <div class="page-error" v-else-if="!state.loading">
         <p>There are no Studies available, For now!</p>
@@ -30,11 +30,11 @@
 </template>
 
 <script>
-import study from "../components/study";
+import videoCard from "../components/Video-card";
 import addStudy from "../components/add-study.vue";
 export default {
   name: "study-component",
-  components: { study, addStudy },
+  components: { videoCard, addStudy },
   data() {
     return {
       state: { loading: true, is_refreshing: false },

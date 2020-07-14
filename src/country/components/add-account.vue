@@ -107,7 +107,7 @@
       <div class="loading control" v-if="state.loading">
         <span @click="CancelRequestFunction()">&times;</span>
         <div class="loading-light"></div>
-        <p>adding user</p>
+        <p>creating user</p>
       </div>
     </form>
   </div>
@@ -199,6 +199,7 @@ export default {
           this.state.loading = false;
           this.$toast.success(res.data.message);
           this.clear();
+          this.$emit("created");
         })
         .catch(err => {
           this.state.loading = false;
@@ -301,7 +302,6 @@ export default {
     .column {
       margin-bottom: 0 !important;
     }
-  
   }
 }
 .add-account,

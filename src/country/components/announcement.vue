@@ -9,8 +9,8 @@
         <hr class="hr" />
       </header>
       <p>{{props.announcement.body}}</p>
-      <b-button class="is-small is-primary">options</b-button>
     </div>
+    <i class="fa fa-ellipsis-v" />
   </div>
 </template>
 
@@ -21,15 +21,17 @@
   box-shadow: 0 2px 5px 0 rgba(32, 33, 36, 0.2);
   height: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  padding: 1rem;
+  position: relative;
 
   .description {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 0.7rem;
+    padding: 0 0.75rem;
     height: 100%;
-    min-height: 140px;
+    flex: 3;
     header {
       h5 {
         font-size: 17px;
@@ -60,17 +62,37 @@
     }
   }
   .img {
-    height: 120px;
-    max-height: 120px;
-    background: #23063e;
+    height: 2.5rem;
+    max-height: 2.5rem;
+    width: 2.5rem;
+    max-width: 2.5rem;
+    background: #8a2be2;
     display: flex;
-    border-radius: inherit;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
     img {
-      height: 100%;
-      width: 50px;
+      height: 50%;
+      width: 60%;
       margin: auto;
+    }
+  }
+  i {
+    cursor: pointer;
+    border-radius: 50%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0.75rem 0.25rem;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #8a2be21c;
     }
   }
 }

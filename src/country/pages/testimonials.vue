@@ -20,11 +20,11 @@
           <p>Fetching...</p>
         </div>
 
-        <div class="testionials" v-if="showTestimonials">
-          <testimonial
+        <div class="ema-grids" v-if="showTestimonials">
+          <video-card
             v-for="testimonial in testimonials"
             :key="testimonial.id"
-            :testimonial="testimonial"
+            :video="testimonial"
           />
         </div>
         <div class="page-error" v-else-if="!state.loading">
@@ -37,12 +37,12 @@
 </template>
 
 <script>
-import testimonial from "../components/testimonial";
+import videoCard from "../components/Video-card";
 import addTestimonial from "../components/add-testimonial";
 export default {
   components: {
     addTestimonial,
-    testimonial
+    videoCard
   },
   data() {
     return {
@@ -87,7 +87,7 @@ export default {
           this.state.loading = false;
           if (err.errorMessager) this.$toast.error(err.errorMessage || "");
         });
-         this.CancelAxios = CANCEL_TOKEN;
+      this.CancelAxios = CANCEL_TOKEN;
     },
     refresh() {
       this.state.is_refreshing = true;
