@@ -18,7 +18,7 @@
         <div class="loading-component loading-primary" />
         <p>Fetching...</p>
       </div>
-      <div class="ema-grids" v-if="showAnnouncements">
+      <div class="ema-1c-grids" v-if="showAnnouncements">
         <announcement
           v-for="announcement in announcements"
           :key="announcement.id"

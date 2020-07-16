@@ -65,6 +65,7 @@ export default {
   },
   mounted() {
     this.state.loading = false;
+    sessionStorage.clear();
   },
   methods: {
     login() {

@@ -6,11 +6,10 @@
     <div class="description">
       <header>
         <h5>{{props.announcement.title}}</h5>
-        <hr class="hr" />
+        <i class="fa fa-ellipsis-v" />
       </header>
-      <p>{{props.announcement.body}}</p>
+      <p class="line-clamp">{{props.announcement.body}}</p>
     </div>
-    <i class="fa fa-ellipsis-v" />
   </div>
 </template>
 
@@ -33,16 +32,36 @@
     height: 100%;
     flex: 3;
     header {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+      width: 100%;
+      border-bottom: 2px solid #cccccc;
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.2rem;
+
       h5 {
-        font-size: 17px;
-        line-height: 115%;
+        font-size: 1.1rem;
+        line-height: 100%;
         font-weight: bold;
         text-transform: capitalize;
         text-align: left;
+        flex: 1;
       }
-      hr {
-        margin: 0.2rem 0 0.3rem;
-        background: #d6d6d6;
+      i {
+        cursor: pointer;
+        border-radius: 50%;
+        width: 1.5rem;
+        height: 1.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: -0.5rem;
+        transition: all 0.3s ease;
+        &:hover {
+          background: #8a2be21c;
+        }
       }
     }
     p {
@@ -75,24 +94,6 @@
       height: 50%;
       width: 60%;
       margin: auto;
-    }
-  }
-  i {
-    cursor: pointer;
-    border-radius: 50%;
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 1.5rem;
-    height: 1.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0.75rem 0.25rem;
-    transition: all 0.3s ease;
-
-    &:hover {
-      background: #8a2be21c;
     }
   }
 }

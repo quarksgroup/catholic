@@ -11,6 +11,7 @@ import VModal from "vue-js-modal";
 import "@/assets/styles/globals.scss";
 import VueIziToast from "vue-izitoast";
 import "izitoast/dist/css/iziToast.min.css";
+import ellipsis from "./globals/components/ellipsis.vue";
 
 Vue.use(VModal);
 Vue.use(Buefy);
@@ -26,6 +27,8 @@ Vue.use(VueIziToast, {
   messageColor: "#8a2be2",
   iconColor: "#8a2be2",
 });
+
+Vue.component("ellipsis", ellipsis);
 
 // axios configs
 // -----------------------------------------------------------------------------

@@ -36,6 +36,13 @@ html {
   .no-select {
     user-select: none;
   }
+  .line-clamp {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    line-height: 135%;
+  }
   .br-1 {
     border-radius: 2px !important;
     div,
@@ -86,6 +93,20 @@ html {
   .label {
     color: #2c3e50;
   }
+  .ellipsis {
+    cursor: pointer;
+    border-radius: 50%;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: -0.5rem;
+    transition: all 0.3s ease;
+    &:hover {
+      background: #8a2be21c;
+    }
+  }
   .truncate {
     width: auto;
     overflow: hidden;
@@ -101,6 +122,12 @@ html {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 290px));
     grid-column-gap: 2rem;
+    grid-row-gap: 1rem;
+    justify-content: start;
+    align-items: center;
+  }
+  .ema-1c-grids {
+    display: grid;
     grid-row-gap: 1rem;
     justify-content: start;
     align-items: center;
