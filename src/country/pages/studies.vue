@@ -19,13 +19,19 @@
         <p>Fetching studies...</p>
       </div>
       <div class="ema-grids" v-if="showStudies">
-        <video-card v-for="study in studies" :key="study.id" :video="study" />
+        <video-card
+          v-for="study in studies"
+          :key="study.id"
+          :video="study"
+          from="inyigisho"
+          @deleted="studyDeleted"
+        />
       </div>
       <div class="page-error" v-else-if="!state.loading">
         <p>There are no Studies available, For now!</p>
       </div>
     </div>
-    <add-study />
+    <add-study @created="studyCreated" />
   </div>
 </template>
 
@@ -72,9 +78,23 @@ export default {
         })
         .catch(err => {
           this.state.loading = false;
-          if (err.errorMessager) this.$toast.error(err.errorMessage || "");
+          if (err.errorMessage) this.$toast.error(err.errorMessage || "");
         });
       this.CancelAxios = CANCEL_TOKEN;
+    },
+    studyCreated(createdItem) {
+      this.studies = [createdItem].concat(this.studies);
+    },
+    studyDeleted(deletedItem) {
+      Object.keys(this.studies).map(
+        key =>
+          this.studies[key].id == deletedItem.id &&
+          this.studies[key].body == deletedItem.body &&
+          this.studies[key].title == deletedItem.title &&
+          this.$delete(this.studies, key)
+      );
+      console.log(this.studies);
+      console.log(deletedItem);
     }
   }
 };

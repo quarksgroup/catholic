@@ -4,7 +4,7 @@
       <h5>Add an account</h5>
     </header>
     <form @submit.prevent="addAccount">
-      <div :class="{'blur':state.loading}">
+      <div>
         <b-field label="Names:">
           <b-input
             type="text"
@@ -244,10 +244,7 @@ export default {
     min-height: calc(100% - 40px);
     overflow-y: auto;
     position: relative;
-    .blur {
-      filter: blur(5px);
-      transition: all 0.3s ease;
-    }
+
     .loading {
       position: absolute;
       top: 0;
@@ -258,8 +255,8 @@ export default {
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background-color: rgba(0, 0, 0, 0.5);
-      animation: scale-animation 0.3s;
+      background-color: rgba(0, 0, 0, 0.75);
+      animation: opacity-animation 0.2s;
       div {
         width: 2rem;
         height: 2rem;
@@ -320,9 +317,9 @@ form {
     border-radius: 2px;
   }
 }
-@keyframes scale-animation {
+@keyframes opacity-animation {
   0% {
-    opacity: 0;
+    opacity: 0.3;
   }
   100% {
     opacity: 1;

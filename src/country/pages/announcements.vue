@@ -12,7 +12,7 @@
             icon="search"
           />
         </b-field>
-        <button class="button is-primary br-1" @click="fetchData">Refresh</button>
+        <button class="button is-primary br-1" @click="fetchData" :disabled="state.loading">Refresh</button>
       </header>
       <div class="page-loading" v-if="state.loading">
         <div class="loading-component loading-primary" />
@@ -23,13 +23,14 @@
           v-for="announcement in announcements"
           :key="announcement.id"
           :announcement="announcement"
+          @deleted="announcementDeleted"
         />
       </div>
       <div class="page-error" v-else-if="!state.loading">
         <p>There are no announcements available, For now!</p>
       </div>
     </div>
-    <add-announcement />
+    <add-announcement @created="announcementCreated" />
   </div>
 </template>
 
@@ -81,9 +82,23 @@ export default {
         })
         .catch(err => {
           this.state.loading = false;
-          if (err.errorMessager) this.$toast.error(err.errorMessage || "");
+          if (err.errorMessage) this.$toast.error(err.errorMessage || "");
         });
       this.CancelAxios = CANCEL_TOKEN;
+    },
+    announcementDeleted(deletedItem) {
+      Object.keys(this.announcements).map(
+        key =>
+          this.announcements[key].id == deletedItem.id &&
+          this.announcements[key].body == deletedItem.body &&
+          this.announcements[key].title == deletedItem.title &&
+          this.$delete(this.announcements, key)
+      );
+      console.log(this.announcements);
+      console.log(deletedItem);
+    },
+    announcementCreated(createdItem) {
+      this.announcements = [createdItem].concat(this.announcements);
     },
     clear() {
       this.state.loading = false;

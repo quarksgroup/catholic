@@ -4,7 +4,7 @@
       <h5>Add Inyigisho</h5>
     </header>
     <form @submit.prevent="addStudy">
-      <div :class="{'blur':state.loading}">
+      <div>
         <b-field label="Inyigisho Title:">
           <b-input
             type="text"
@@ -26,6 +26,7 @@
               type="textarea"
               class="br-1 no-shadow"
               v-model="message"
+              validation-message=" "
             />
           </b-field>
         </div>
@@ -200,9 +201,9 @@ export default {
         .then(res => {
           console.log(res);
           this.state.loading = false;
-          this.$toast.success(res.data.message);
+          if (res.data.message) this.$toast.success(res.data.message);
+          if (res.status == 201) this.$emit("created", res.data.data);
           this.clear();
-          this.$emit("created");
         })
         .catch(err => {
           this.state.loading = false;
@@ -246,10 +247,6 @@ export default {
     min-height: calc(100% - 40px);
     overflow-y: auto;
     position: relative;
-    .blur {
-      filter: blur(5px);
-      transition: all 0.3s ease;
-    }
     .loading {
       position: absolute;
       top: 0;
@@ -260,8 +257,8 @@ export default {
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background-color: rgba(0, 0, 0, 0.5);
-      animation: opacity-animation 0.3s;
+      background-color: rgba(0, 0, 0, 0.75);
+      animation: opacity-animation 0.2s;
       div {
         width: 2rem;
         height: 2rem;
@@ -329,7 +326,7 @@ form {
 }
 @keyframes opacity-animation {
   0% {
-    opacity: 0;
+    opacity: 0.3;
   }
   100% {
     opacity: 1;

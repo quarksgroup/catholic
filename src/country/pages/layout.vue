@@ -55,6 +55,7 @@
       >
         <add-announcement />
       </modal>
+      <read-more/>
     </div>
   </div>
 </template>
@@ -63,7 +64,8 @@
 export default {
   components: {
     "add-study": () => import("../components/add-study"),
-    "add-announcement": () => import("../components/add-announcement")
+    "add-announcement": () => import("../components/add-announcement"),
+    "read-more":()=> import('../../globals/components/ReadMore')
   }
 };
 </script>

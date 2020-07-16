@@ -25,6 +25,8 @@
             v-for="testimonial in testimonials"
             :key="testimonial.id"
             :video="testimonial"
+            from="testimonial"
+            @deleted="testimonialDeleted"
           />
         </div>
         <div class="page-error" v-else-if="!state.loading">
@@ -32,7 +34,7 @@
         </div>
       </div>
     </div>
-    <add-testimonial />
+    <add-testimonial @created="testimonialCreated" />
   </div>
 </template>
 
@@ -85,13 +87,28 @@ export default {
         })
         .catch(err => {
           this.state.loading = false;
-          if (err.errorMessager) this.$toast.error(err.errorMessage || "");
+          if (err.errorMessage) this.$toast.error(err.errorMessage || "");
         });
       this.CancelAxios = CANCEL_TOKEN;
     },
+
     refresh() {
       this.state.is_refreshing = true;
       this.fetchData();
+    },
+    testimonialCreated(createdItem) {
+      this.testimonials = [createdItem].concat(this.testimonials);
+    },
+    testimonialDeleted(deletedItem) {
+      Object.keys(this.testimonials).map(
+        key =>
+          this.testimonials[key].id == deletedItem.id &&
+          this.testimonials[key].body == deletedItem.body &&
+          this.testimonials[key].title == deletedItem.title &&
+          this.$delete(this.testimonials, key)
+      );
+      console.log(this.testimonials);
+      console.log(deletedItem);
     }
   }
 };

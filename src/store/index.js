@@ -63,20 +63,20 @@ export default new Vuex.Store({
   mutations: {
     INITIALIZE: async (state) => {
       state.AppLoading = true;
-      let GetCountries = Vue.prototype.axios
-        .get("country")
-        .then((res) => res.data);
-      let GetProvinces = Vue.prototype.axios
-        .get("province")
-        .then((res) => res.data);
-      let GetSectors = Vue.prototype.axios
-        .get("sector")
-        .then((res) => res.data);
-      let GetGroups = Vue.prototype.axios
-        .get("groupe-de-priere")
-        .then((res) => res.data);
-
       if (sessionStorage.getItem("token")) {
+        let GetCountries = Vue.prototype.axios
+          .get("country")
+          .then((res) => res.data);
+        let GetProvinces = Vue.prototype.axios
+          .get("province")
+          .then((res) => res.data);
+        let GetSectors = Vue.prototype.axios
+          .get("sector")
+          .then((res) => res.data);
+        let GetGroups = Vue.prototype.axios
+          .get("groupe-de-priere")
+          .then((res) => res.data);
+
         try {
           state.location.countries = await GetCountries;
           state.location.provinces = await GetProvinces;

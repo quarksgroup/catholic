@@ -1,18 +1,60 @@
-<template functional>
+<template >
   <div class="announcement">
     <div class="img no-select">
       <img src="../../assets/img/notify.svg" alt="notify_image" />
     </div>
     <div class="description">
       <header>
-        <h5>{{props.announcement.title}}</h5>
-        <i class="fa fa-ellipsis-v" />
+        <h5>{{announcement.title}}</h5>
+        <ellipsis :dropdowns="dropdowns" />
       </header>
-      <p class="line-clamp">{{props.announcement.body}}</p>
+      <p class="line-clamp">{{announcement.body}}</p>
+    </div>
+    <div class="error deleting" v-if="state.deleting">
+      <i class="loading-light" />
+      <p>Deleting announcement...</p>
     </div>
   </div>
 </template>
+<script>
+export default {
+  name: "announcement-component",
+  props: { announcement: Object },
+  data() {
+    return {
+      dropdowns: [
+        { name: "Read more", action: this.readMore },
+        { name: "Delete announcement", action: this.deleteAnnouncement }
+      ],
+      state: { deleting: false }
+    };
+  },
+  mounted() {},
+  methods: {
+    readMore() {
+      console.log(Object.keys(this.announcement));
 
+      this.$modal.show("read-more", { item: this.announcement });
+    },
+    deleteAnnouncement() {
+      console.log(this.announcement);
+      this.state.deleting = true;
+      this.axios
+        .delete(`announcement/${this.announcement.id}`)
+        .then(res => {
+          console.log(res);
+          this.state.deleting = false;
+          if (res.status == 200) this.$emit("deleted", this.announcement);
+          if (res.data.message) this.$toast.error(res.data.message);
+        })
+        .catch(err => {
+          this.state.deleting = false;
+          if (err.errorMessage) this.$toast.error(err.errorMessage);
+        });
+    }
+  }
+};
+</script>
 <style lang="scss">
 .announcement {
   background: white;
@@ -94,6 +136,28 @@
       height: 50%;
       width: 60%;
       margin: auto;
+    }
+  }
+  .error {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: inherit;
+    color: white;
+    i {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+    p {
+      margin-bottom: 0;
+      margin-top: 0.5rem;
     }
   }
 }

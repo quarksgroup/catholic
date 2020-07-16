@@ -17,21 +17,46 @@
     <div class="description">
       <div class="study-title">
         <h5 class="truncate">{{video.title}}</h5>
-        <ellipsis :dropdowns="dropdowns" @readMore="alert('reading more')" />
+        <ellipsis :dropdowns="dropdowns" />
       </div>
       <div class="study-subtitle line-clamp">
         <p>{{video.body}}</p>
       </div>
     </div>
+    <modal
+      :name="`study_${video.id}_${video.created_at}_${video.created_time}`"
+      :clickToClose="false"
+      scrollable
+      height="auto"
+      focusTrap
+      reset
+      adaptive
+    >
+      <section id="read-more-modal">
+        <header class="bg-light">
+          <h5>{{video.title}}</h5>
+          <span
+            @click="$modal.hide(`study_${video.id}_${video.created_at}_${video.created_time}`)"
+          >&times;</span>
+        </header>
+        <div class="description">
+          <article>{{video.body}}</article>
+        </div>
+      </section>
+    </modal>
   </div>
 </template>
 <script>
 export default {
   name: "video-card-component",
-  props: { video: Object },
+  props: { video: Object, from: String },
   data() {
     return {
-      dropdowns: [{ name: "Read more", action: this.readMore }]
+      dropdowns: [
+        { name: "Read more", action: this.readMore },
+        { name: `Delete ${this.from}`, action: this.deleteVideo }
+      ],
+      state: { deleting: false }
     };
   },
   computed: {
@@ -45,10 +70,29 @@ export default {
       } else return null;
     }
   },
-  mounted() {},
+  mounted() {
+    console.log(this.from);
+  },
   methods: {
     readMore() {
-      alert("reading more...");
+      this.$modal.show(`read-more`, { item: this.video });
+      console.log(this.video);
+    },
+    deleteVideo() {
+      console.log(this.video);
+      this.state.deleting = true;
+      this.axios
+        .delete(`${this.from}/${this.video.id}`)
+        .then(res => {
+          console.log(res);
+          this.state.deleting = false;
+          if (res.status == 200) this.$emit("deleted", this.video);
+          if (res.data.message) this.$toast.error(res.data.message);
+        })
+        .catch(err => {
+          this.state.deleting = false;
+          if (err.errorMessage) this.$toast.error(err.errorMessage);
+        });
     }
   }
 };

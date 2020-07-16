@@ -13,7 +13,19 @@ import VueIziToast from "vue-izitoast";
 import "izitoast/dist/css/iziToast.min.css";
 import ellipsis from "./globals/components/ellipsis.vue";
 
-Vue.use(VModal);
+Vue.use(VModal, {
+  dynamicDefault: {
+    draggable: false,
+    resizable: false,
+    adaptive: true,
+    draggable: false,
+    scrollable: true,
+    focusTrap: true,
+    reset: true,
+    clickToClose: false,
+    height: "auto",
+  },
+});
 Vue.use(Buefy);
 Vue.use(VueIziToast, {
   timeout: 7000,
