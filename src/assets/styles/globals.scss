@@ -306,6 +306,28 @@ html {
   }
 }
 
+.ema-add-radios {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+
+  & > label {
+    min-width: 100px;
+
+    span.check {
+      width: 1rem !important;
+      height: 1rem !important;
+      &::before {
+        width: 1rem !important;
+        height: 1rem !important;
+        margin-bottom: calc(-1em / 2) !important;
+        margin-left: calc(-1em / 2) !important;
+      }
+    }
+  }
+}
+
 .page-loading {
   grid-column: 1/-1;
   width: 100%;
