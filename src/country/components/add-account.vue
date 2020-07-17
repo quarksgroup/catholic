@@ -38,11 +38,6 @@
           />
         </b-field>
 
-        <b-field class="control ema-add-radios">
-          <b-radio v-model="isPublic" :native-value="true">Public</b-radio>
-          <b-radio v-model="isPublic" :native-value="false">Private</b-radio>
-        </b-field>
-
         <div class="select-grids">
           <b-field label="Country:">
             <b-select
@@ -129,7 +124,6 @@ export default {
       name: "",
       username: "",
       phone: "",
-      isPublic: false,
       country: { name: "all", id: null },
       province: { name: "all", id: null },
       sector: { name: "all", id: null },
@@ -186,7 +180,6 @@ export default {
         name: this.name,
         username: this.username,
         phone: this.phone,
-        public: this.isPublic,
         country_id: this.country.id,
         province_id: this.province.id,
         sector_id: this.sector.id,
@@ -228,7 +221,6 @@ export default {
       this.sector = this.default;
       this.group = this.default;
       this.CancelRequest = null;
-      this.isPublic = false;
     }
   }
 };
