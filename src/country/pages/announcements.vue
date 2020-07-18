@@ -24,29 +24,39 @@
           :key="announcement.id"
           :announcement="announcement"
           @deleted="announcementDeleted"
+          @edit="editAnnouncement"
         />
       </div>
       <div class="page-error" v-else-if="!state.loading">
         <p>There are no announcements available, For now!</p>
       </div>
     </div>
-    <add-announcement @created="announcementCreated" />
+    <update-announcement
+      v-if="showUpdateForm"
+      :announcement="objectToUpdate"
+      @updated="announcementUpdated"
+      @close="objectToUpdate=null"
+    />
+    <add-announcement v-else @created="announcementCreated" />
   </div>
 </template>
 
 <script>
 import announcement from "../components/announcement.vue";
 import addAnnouncement from "../components/add-announcement";
+import updateAnnouncement from "../components/update-announcement";
 export default {
   components: {
     addAnnouncement,
-    announcement
+    announcement,
+    updateAnnouncement
   },
   data() {
     return {
       announcements: [],
       state: { loading: true, error: "" },
-      CancelAxios: null
+      CancelAxios: null,
+      objectToUpdate: null
     };
   },
   computed: {
@@ -56,6 +66,9 @@ export default {
     showAnnouncements() {
       if (this.announcements.length > 0) return true;
       else return false;
+    },
+    showUpdateForm() {
+      return this.objectToUpdate ? true : false;
     }
   },
   beforeMount() {
@@ -94,11 +107,19 @@ export default {
           this.announcements[key].title == deletedItem.title &&
           this.$delete(this.announcements, key)
       );
-      console.log(this.announcements);
-      console.log(deletedItem);
     },
     announcementCreated(createdItem) {
       this.announcements = [createdItem].concat(this.announcements);
+    },
+    announcementUpdated(updatedItem) {
+      Object.keys(this.announcements).map(
+        item =>
+          this.announcements[key].id == updatedItem.id &&
+          this.$set(this.announcements, key, updatedItem)
+      );
+    },
+    editAnnouncement(itemToEdit) {
+      this.objectToUpdate = itemToEdit;
     },
     clear() {
       this.state.loading = false;

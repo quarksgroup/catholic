@@ -27,6 +27,7 @@
             :video="testimonial"
             from="testimonial"
             @deleted="testimonialDeleted"
+            @edit="editTestimonial"
           />
         </div>
         <div class="page-error" v-else-if="!state.loading">
@@ -34,16 +35,24 @@
         </div>
       </div>
     </div>
-    <add-testimonial @created="testimonialCreated" />
+    <update-testimonial
+      v-if="showUpdateForm"
+      :testimonial="objectToUpdate"
+      @updated="testimonialUpdated"
+      @close="objectToUpdate=null"
+    />
+    <add-testimonial v-else @created="testimonialCreated" />
   </div>
 </template>
 
 <script>
 import videoCard from "../components/Video-card";
 import addTestimonial from "../components/add-testimonial";
+import updateTestimonial from "../components/update-testimonial";
 export default {
   components: {
     addTestimonial,
+    updateTestimonial,
     videoCard
   },
   data() {
@@ -54,13 +63,17 @@ export default {
         is_refreshing: false
       },
       testimonials: [],
-      CancelAxios: null
+      CancelAxios: null,
+      objectToUpdate: null
     };
   },
   computed: {
     showTestimonials() {
       if (this.testimonials.length > 0) return true;
       else return false;
+    },
+    showUpdateForm() {
+      return this.objectToUpdate ? true : false;
     }
   },
   destroyed() {
@@ -91,7 +104,6 @@ export default {
         });
       this.CancelAxios = CANCEL_TOKEN;
     },
-
     refresh() {
       this.state.is_refreshing = true;
       this.fetchData();
@@ -107,8 +119,16 @@ export default {
           this.testimonials[key].title == deletedItem.title &&
           this.$delete(this.testimonials, key)
       );
-      console.log(this.testimonials);
-      console.log(deletedItem);
+    },
+    testimonialUpdated(updatedItem) {
+      Object.keys(this.testimonials).map(
+        item =>
+          this.testimonials[key].id == updatedItem.id &&
+          this.$set(this.testimonials, key, updatedItem)
+      );
+    },
+    editTestimonial(itemToEdit) {
+      this.objectToUpdate = itemToEdit;
     }
   }
 };

@@ -1,13 +1,17 @@
 <template>
   <div class="study">
     <div class="video">
+      <div class="deleting ema-loading-component" v-if="state.deleting">
+        <i class="loading-light" />
+        <p>Deleting {{from || ''}}...</p>
+      </div>
       <iframe
         width="560"
         height="315"
         :src="`//www.youtube.com/embed/${videoURL}`"
         frameborder="0"
         allowfullscreen
-        v-if="videoURL"
+        v-else-if="videoURL"
       ></iframe>
       <div class="invalid-video" v-else>
         <i class="fa fa-ban fa-2x" />
@@ -54,6 +58,7 @@ export default {
     return {
       dropdowns: [
         { name: "Read more", action: this.readMore },
+        { name: `Edit ${this.from}`, action: this.edit },
         { name: `Delete ${this.from}`, action: this.deleteVideo }
       ],
       state: { deleting: false }
@@ -61,18 +66,17 @@ export default {
   },
   computed: {
     videoURL() {
-      if (this.video.video_url) {
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-        const match = this.video.video_url.match(regExp);
-        return match && match[2].length === 11
-          ? match[2]
-          : this.video.video_url;
-      } else return null;
+      // if (this.video.video_url) {
+      //   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+      //   const match = this.video.video_url.match(regExp);
+      //   return match && match[2].length === 11
+      //     ? match[2]
+      //     : this.video.video_url;
+      // } else
+      return null;
     }
   },
-  mounted() {
-    console.log(this.from);
-  },
+  mounted() {},
   methods: {
     readMore() {
       this.$modal.show(`read-more`, { item: this.video });
@@ -93,6 +97,9 @@ export default {
           this.state.deleting = false;
           if (err.errorMessage) this.$toast.error(err.errorMessage);
         });
+    },
+    edit() {
+      this.$emit("edit", this.video);
     }
   }
 };

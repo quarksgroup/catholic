@@ -24,6 +24,7 @@ export default {
     return {
       dropdowns: [
         { name: "Read more", action: this.readMore },
+        { name: "Edit announcement", action: this.editAnnouncement },
         { name: "Delete announcement", action: this.deleteAnnouncement }
       ],
       state: { deleting: false }
@@ -32,8 +33,6 @@ export default {
   mounted() {},
   methods: {
     readMore() {
-      console.log(Object.keys(this.announcement));
-
       this.$modal.show("read-more", { item: this.announcement });
     },
     deleteAnnouncement() {
@@ -51,6 +50,9 @@ export default {
           this.state.deleting = false;
           if (err.errorMessage) this.$toast.error(err.errorMessage);
         });
+    },
+    editAnnouncement() {
+      this.$emit("edit", this.announcement);
     }
   }
 };

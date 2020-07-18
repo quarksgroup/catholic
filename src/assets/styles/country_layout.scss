@@ -80,7 +80,7 @@
   #country-content {
     grid-row: 2;
     padding: 2rem 1rem;
-    height: -webkit-fill-available;
+    height: 100%;
     overflow: auto;
 
     &::-webkit-scrollbar {

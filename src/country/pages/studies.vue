@@ -25,33 +25,45 @@
           :video="study"
           from="inyigisho"
           @deleted="studyDeleted"
+          @edit="editStudy"
         />
       </div>
       <div class="page-error" v-else-if="!state.loading">
         <p>There are no Studies available, For now!</p>
       </div>
     </div>
-    <add-study @created="studyCreated" />
+    <update-study
+      v-if="showUpdateForm"
+      :study="objectToUpdate"
+      @updated="studyUpdated"
+      @close="objectToUpdate=null"
+    />
+    <add-study v-else @created="studyCreated" />
   </div>
 </template>
 
 <script>
 import videoCard from "../components/Video-card";
 import addStudy from "../components/add-study.vue";
+import updateStudy from "../components/update-study.vue";
 export default {
   name: "study-component",
-  components: { videoCard, addStudy },
+  components: { videoCard, addStudy, updateStudy },
   data() {
     return {
       state: { loading: true, is_refreshing: false },
       studies: [],
-      CancelAxios: null
+      CancelAxios: null,
+      objectToUpdate: null
     };
   },
   computed: {
     showStudies() {
       if (this.studies.length > 0) return true;
       else return false;
+    },
+    showUpdateForm() {
+      return this.objectToUpdate ? true : false;
     }
   },
   mounted() {
@@ -93,8 +105,16 @@ export default {
           this.studies[key].title == deletedItem.title &&
           this.$delete(this.studies, key)
       );
-      console.log(this.studies);
-      console.log(deletedItem);
+    },
+    studyUpdated(updatedItem) {
+      Object.keys(this.studies).map(
+        item =>
+          this.studies[key].id == updatedItem.id &&
+          this.$set(this.studies, key, updatedItem)
+      );
+    },
+    editStudy(itemToEdit) {
+      this.objectToUpdate = itemToEdit;
     }
   }
 };
