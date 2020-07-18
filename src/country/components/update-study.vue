@@ -235,7 +235,7 @@ export default {
         key => reqData[key] == null && delete reqData[key]
       );
       this.axios
-        .put("inyigisho", reqData, {
+        .put(`inyigisho/${this.study.id}`, reqData, {
           cancelToken: new CancelToken(function executor(token) {
             CANCEL_TOKEN = token;
           })
