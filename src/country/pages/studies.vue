@@ -98,17 +98,12 @@ export default {
       this.studies = [createdItem].concat(this.studies);
     },
     studyDeleted(deletedItem) {
-      Object.keys(this.studies).map(
-        key =>
-          this.studies[key].id == deletedItem.id &&
-          this.studies[key].body == deletedItem.body &&
-          this.studies[key].title == deletedItem.title &&
-          this.$delete(this.studies, key)
-      );
+        if (this.studies.indexOf(deletedItem) !== -1)
+        this.studies.splice(this.studies.indexOf(deletedItem), 1);
     },
     studyUpdated(updatedItem) {
       Object.keys(this.studies).map(
-        item =>
+        key =>
           this.studies[key].id == updatedItem.id &&
           this.$set(this.studies, key, updatedItem)
       );

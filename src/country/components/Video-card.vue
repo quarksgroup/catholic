@@ -66,14 +66,13 @@ export default {
   },
   computed: {
     videoURL() {
-      // if (this.video.video_url) {
-      //   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-      //   const match = this.video.video_url.match(regExp);
-      //   return match && match[2].length === 11
-      //     ? match[2]
-      //     : this.video.video_url;
-      // } else
-      return null;
+      if (this.video.video_url) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+        const match = this.video.video_url.match(regExp);
+        return match && match[2].length === 11
+          ? match[2]
+          : this.video.video_url;
+      } else return null;
     }
   },
   mounted() {},

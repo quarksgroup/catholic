@@ -11,10 +11,17 @@ const routes = [
     component: guest,
     children: [
       {
-        path: "/",
+        path: "",
         name: "login",
         component: () =>
           import(/* webpackChunkName: "login" */ "@/globals/pages/login"),
+        meta: { guest: true },
+      },
+      {
+        path: "logout",
+        name: "Logout Page",
+        component: () =>
+          import(/*webpackChunkName:"logout"*/ "@/globals/pages/logout"),
         meta: { guest: true },
       },
     ],
@@ -55,6 +62,13 @@ const routes = [
         name: "Bible study",
         component: () =>
           import(/*webpackChunkName:"country"*/ "@/country/pages/studies.vue"),
+        meta: { requireAuth: true },
+      },
+      {
+        path: "profile",
+        name: "Profile Page",
+        component: () =>
+          import(/*webpackChunkName:"country"*/ "@/country/pages/profile.vue"),
         meta: { requireAuth: true },
       },
     ],

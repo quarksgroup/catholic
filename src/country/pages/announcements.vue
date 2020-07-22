@@ -100,20 +100,15 @@ export default {
       this.CancelAxios = CANCEL_TOKEN;
     },
     announcementDeleted(deletedItem) {
-      Object.keys(this.announcements).map(
-        key =>
-          this.announcements[key].id == deletedItem.id &&
-          this.announcements[key].body == deletedItem.body &&
-          this.announcements[key].title == deletedItem.title &&
-          this.$delete(this.announcements, key)
-      );
+      if (this.announcements.indexOf(deletedItem) !== -1)
+        this.announcements.splice(this.announcements.indexOf(deletedItem), 1);
     },
     announcementCreated(createdItem) {
       this.announcements = [createdItem].concat(this.announcements);
     },
     announcementUpdated(updatedItem) {
       Object.keys(this.announcements).map(
-        item =>
+        key =>
           this.announcements[key].id == updatedItem.id &&
           this.$set(this.announcements, key, updatedItem)
       );

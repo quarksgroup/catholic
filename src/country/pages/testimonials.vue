@@ -112,17 +112,12 @@ export default {
       this.testimonials = [createdItem].concat(this.testimonials);
     },
     testimonialDeleted(deletedItem) {
-      Object.keys(this.testimonials).map(
-        key =>
-          this.testimonials[key].id == deletedItem.id &&
-          this.testimonials[key].body == deletedItem.body &&
-          this.testimonials[key].title == deletedItem.title &&
-          this.$delete(this.testimonials, key)
-      );
+      if (this.testimonials.indexOf(deletedItem) !== -1)
+        this.testimonials.splice(this.testimonials.indexOf(deletedItem), 1);
     },
     testimonialUpdated(updatedItem) {
       Object.keys(this.testimonials).map(
-        item =>
+        key =>
           this.testimonials[key].id == updatedItem.id &&
           this.$set(this.testimonials, key, updatedItem)
       );

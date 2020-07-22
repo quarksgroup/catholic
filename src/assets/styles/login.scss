@@ -97,8 +97,14 @@
         height: 40px;
         outline-width: 0;
 
-        img {
-          height: 40px;
+        .loading {
+          width: 100%;
+          height: inherit;
+
+          i {
+            width: 1.5rem;
+            height: 1.5rem;
+          }
         }
       }
     }

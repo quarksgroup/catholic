@@ -26,7 +26,9 @@ Vue.use(VModal, {
     height: "auto",
   },
 });
-Vue.use(Buefy);
+Vue.use(Buefy, {
+  defaultIconPack: "fa",
+});
 Vue.use(VueIziToast, {
   timeout: 7000,
   transitionIn: "flipInX",

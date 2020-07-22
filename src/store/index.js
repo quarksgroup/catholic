@@ -53,10 +53,10 @@ export default new Vuex.Store({
   state: {
     user: null,
     location: {
-      countries: [],
-      provinces: [],
-      sectors: [],
-      groups: [],
+      countries: null,
+      provinces: null,
+      sectors: null,
+      groups: null,
     },
     AppLoading: false,
   },
@@ -76,14 +76,17 @@ export default new Vuex.Store({
         let GetGroups = Vue.prototype.axios
           .get("groupe-de-priere")
           .then((res) => res.data);
+        let GetUser = Vue.prototype.axios
+          .get("user")
+          .then((res) => res.data.data);
 
         try {
+          state.user = await GetUser;
           state.location.countries = await GetCountries;
           state.location.provinces = await GetProvinces;
           state.location.sectors = await GetSectors;
           state.location.groups = await GetGroups;
           state.AppLoading = false;
-          console.log(state.location);
         } catch {
           state.AppLoading = false;
         }
@@ -92,10 +95,25 @@ export default new Vuex.Store({
       }
     },
     MUTATEUSER: (state, new_user) => (state.user = new_user),
+    RESET: (state) => {
+      return new Promise((resolve, reject) => {
+        state.user = null;
+        state.location.countries = null;
+        state.location.provinces = null;
+        state.location.sectors = null;
+        state.location.groups = null;
+        state.AppLoading = false;
+        resolve();
+      });
+    },
   },
   actions: {
     STARTUP: ({ commit }) => commit("INITIALIZE"),
     SETUSER: ({ commit }, user) => commit("MUTATEUSER", user),
+    LOGOUT: async ({ commit }) => {
+      sessionStorage.clear();
+      await commit("RESET");
+    },
   },
   getters: {
     userDetails: (state) => state.user,

@@ -195,6 +195,7 @@ export default {
         }
       : this.default;
     this.state.loading = false;
+    console.log(this.country);
   },
   beforeDestroy() {
     this.CancelRequestFunction();
@@ -227,7 +228,7 @@ export default {
           console.log(res);
           this.state.loading = false;
           if (res.data.message) this.$toast.success(res.data.message);
-          if (res.status == 201) this.$emit("updated", res.data.data);
+          if (res.status == 200) this.$emit("updated", res.data.data);
           this.$emit("close");
         })
         .catch(err => {

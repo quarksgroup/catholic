@@ -18,8 +18,8 @@
             id="username"
             class="username"
             v-model="username"
-            placeholder="Enter email address"
-            title="valid email address is required"
+            placeholder="Enter username"
+            title="valid username is required"
           />
         </div>
         <div class="form-control">
@@ -37,7 +37,9 @@
           />
         </div>
         <button type="submit" class="loginBtn">
-          <img v-if="state.loading" :src="img.spinner" />
+          <div class="loading flex-center" v-if="state.loading">
+            <i class="loading-light" />
+          </div>
           <p v-else>Login</p>
         </button>
       </form>
@@ -46,7 +48,6 @@
 </template>
 
 <script>
-import spinner from "../../assets/img/white-spinner.svg";
 import logo from "../../assets/img/login_svg.svg";
 export default {
   name: "login",
@@ -56,8 +57,7 @@ export default {
         loading: false
       },
       img: {
-        logo: logo,
-        spinner: spinner
+        logo: logo
       },
       username: "",
       password: ""
