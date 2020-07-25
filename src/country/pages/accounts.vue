@@ -3,8 +3,23 @@
     <div class="all-accounts">
       <header>
         <h5>Table of accounts</h5>
+        <b-input
+          type="search"
+          class="is-outlined"
+          icon-pack="fas"
+          icon="search"
+          :disabled="accounts.length < 1"
+          placeholder="Search account name..."
+          v-model="searchedName"
+        />
+        <button class="button is-inverted is-outlined is-primary" @click="fetchAccounts">Refresh</button>
       </header>
-      <accounts-table :accounts="accounts" :loading="state.loading" />
+      <accounts-table
+        :accounts="accounts"
+        :loading="state.loading"
+        @deleteAccount="accountDeleted"
+        :searchedName="searchedName"
+      />
     </div>
     <add-account />
   </div>
@@ -18,11 +33,12 @@ export default {
   data() {
     return {
       state: { loading: false },
-      accounts: []
+      accounts: [],
+      searchedName: "",
     };
   },
+  computed: {},
   mounted() {
-    // console.log(this.$CancelToken());
     this.fetchAccounts();
   },
   methods: {
@@ -30,16 +46,20 @@ export default {
       this.state.loading = true;
       this.axios
         .get("users-list")
-        .then(res => {
+        .then((res) => {
           this.accounts = res.data.data;
           this.state.loading = false;
         })
-        .catch(err => {
+        .catch((err) => {
           this.state.loading = false;
           if (err.errorMessage) this.$toast.error(err.errorMessage);
         });
-    }
-  }
+    },
+    accountDeleted(deletedAccount) {
+      if (this.accounts.indexOf(deletedAccount) !== -1)
+        this.accounts.splice(this.accounts.indexOf(deletedAccount), 1);
+    },
+  },
 };
 </script>
 
@@ -52,13 +72,24 @@ export default {
     box-shadow: 1px 1px 6px 0 rgba(32, 33, 36, 0.28);
     height: fit-content;
     max-width: calc(100vw - 370px - 3rem);
-    header {
+    & > header {
       background: blueviolet;
       padding: 0.5rem 1rem;
       color: white;
       border-radius: 5px 5px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      h5 {
+        flex: 1;
+        margin-right: 0.75rem;
+      }
+      button {
+        margin-left: 0.75rem;
+        border-radius: 3px;
+      }
     }
-    
   }
 }
 </style>

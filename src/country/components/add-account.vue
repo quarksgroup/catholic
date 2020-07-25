@@ -38,6 +38,17 @@
           />
         </b-field>
 
+        <b-field label="Email:">
+          <b-input
+            type="text"
+            placeholder="Enter email..."
+            validation-message=" "
+            class="br-1 no-shadow"
+            required
+            v-model="email"
+          />
+        </b-field>
+
         <div class="select-grids">
           <b-field label="Country:">
             <b-select
@@ -101,13 +112,13 @@
         </div>
 
         <div class="control ema-btn">
-          <button class="button is-primary" type="submit">Add</button>
+          <button class="button is-primary" type="submit">create account</button>
         </div>
       </div>
       <div class="loading control" v-if="state.loading">
         <span @click="CancelRequestFunction()">&times;</span>
         <div class="loading-light"></div>
-        <p>creating user</p>
+        <p>creating Account</p>
       </div>
     </form>
   </div>
@@ -124,6 +135,7 @@ export default {
       name: "",
       username: "",
       phone: "",
+      email: "",
       country: { name: "all", id: null },
       province: { name: "all", id: null },
       sector: { name: "all", id: null },
@@ -137,7 +149,6 @@ export default {
       return this.$store.getters.location;
     },
     countryOptions() {
-      console.log(this.location);
       return [this.default, this.$countryOptions()].flat();
     },
     provinceOptions() {
@@ -180,6 +191,7 @@ export default {
         name: this.name,
         username: this.username,
         phone: this.phone,
+        email: this.email,
         country_id: this.country.id,
         province_id: this.province.id,
         sector_id: this.sector.id,

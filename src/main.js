@@ -3,7 +3,6 @@ import axios from "axios";
 import Buefy from "buefy";
 import App from "./App.vue";
 import store from "./store";
-import "buefy/dist/buefy.css";
 import VueAxios from "vue-axios";
 import "./registerServiceWorker";
 import router from "./router.js";

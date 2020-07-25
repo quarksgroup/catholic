@@ -6,19 +6,19 @@
       narrowed
       striped
       sticky-headers
-      :loading="loading"
-      :data="accounts"
+      :data="loading ? [] : shownAccounts"
       :opened-detailed="openedDetail"
       detailed
       detail-key="id"
       ref="accountsTable"
       show-detail-icon
     >
+      <!-- props slot -->
       <template slot-scope="props">
         <b-table-column field="name" label="Names">
           <template>
             <a @click="toggle(props.row)">
-                <i class=""></i>
+              <i class></i>
             </a>
             {{ props.row.name }}
           </template>
@@ -26,25 +26,10 @@
         <b-table-column field="username" label="Username">{{ props.row.username }}</b-table-column>
         <b-table-column field="phone" label="Phone Number">{{ props.row.phone }}</b-table-column>
 
-        <b-table-column field="created_at" label="Date" centered>
-          <span class="tag is-primary">{{ props.row.created_at}}</span>
-        </b-table-column>
+        <b-table-column field="created_at" label="Date" centered>{{ props.row.created_at}}</b-table-column>
       </template>
-      <template slot="empty">
-        <section class="section">
-          <div class="content has-text-grey has-text-centered">
-            <p>
-              <b-icon icon="emoticon-sad" size="is-large"></b-icon>
-            </p>
-            <p>No accounts available at the moment.</p>
-          </div>
-        </section>
-      </template>
-      <template slot="footer">
-        <div class="has-text-centered p-3">
-          <i class="fa fa-infinity mr-1" />End
-        </div>
-      </template>
+
+      <!-- details slot -->
       <template slot="detail" slot-scope="props">
         <div class="detail-row">
           <section>
@@ -60,6 +45,58 @@
             <label for="strong">{{ props.row.role ? props.row.role.description : 'Not available' }}</label>
           </section>
         </div>
+        <div class="update-row">
+          <button class="button is-danger is-outlined" @click="showConfirmation = true">
+            <i class="fa fa-trash" />
+            Delete Account
+          </button>
+          <b-modal
+            :active.sync="showConfirmation"
+            has-modal-card
+            trap-focus
+            :destroy-on-hide="true"
+            aria-role="dialog"
+            aria-modal
+          >
+            <delete-confirmation
+              :account="props.row"
+              @canceled="showConfirmation = false"
+              @delete="deleteAccount"
+            />
+          </b-modal>
+        </div>
+        <div class="deleting loading" v-if="props.row.loading && props.row.loading == true ">
+          <span class="loading-light" />
+          <p>deleting account</p>
+        </div>
+      </template>
+
+      <!-- empty slot -->
+      <template slot="empty">
+        <section class="section loading has-text-centered p-3" v-if="loading">
+          <i class="loading-dark" />
+          <p>Loading accounts</p>
+        </section>
+        <section class="section" v-else-if="haveAccounts">
+          <div class="content p-3 has-text-centered">
+            <p>No accounts found at the moment.</p>
+          </div>
+        </section>
+        <section class="section" v-else-if="searchedName">
+          <div class="content p-3 has-text-centered">
+            <p>
+              No accounts with the name
+              <span class="has-text-weight-bold">{{searchedName}}</span>.
+            </p>
+          </div>
+        </section>
+      </template>
+
+      <!-- footer slot -->
+      <template slot="footer" v-if="haveAccounts">
+        <div class="has-text-centered p-3">
+          <i class="fa fa-infinity mr-1" />End
+        </div>
       </template>
     </b-table>
   </div>
@@ -68,20 +105,56 @@
 <script>
 export default {
   name: "accounts-table-component",
+  components: {
+    deleteConfirmation: () =>
+      import("../../globals/components/deleteAccount-confirmation.vue"),
+  },
   props: {
     accounts: Array,
-    loading: Boolean
+    loading: Boolean,
+    searchedName: String,
   },
   data() {
     return {
-      openedDetail: []
+      openedDetail: [],
+      account: [],
+      showConfirmation: false,
     };
+  },
+  computed: {
+    haveAccounts() {
+      return Boolean(this.shownAccounts.length > 0);
+    },
+    shownAccounts() {
+      if (this.loading == true) return [];
+      return this.accounts.filter((account) =>
+        account.name.toLowerCase().includes(this.searchedName.toLowerCase())
+      );
+    },
+  },
+  mounted() {
+    console.log("this.shownAccounts");
   },
   methods: {
     toggle(row) {
       this.$refs.accountsTable.toggleDetails(row);
-    }
-  }
+    },
+    deleteAccount(account) {
+      this.showConfirmation = false;
+      this.$set(account, "loading", true);
+      this.axios
+        .delete(`user/${account.id}`)
+        .then((res) => {
+          this.$set(account, "loading", false);
+          if (res.data.message) this.$toast.success(res.data.message);
+          if (res.status == 200) this.$emit("deleteAccount", account);
+        })
+        .catch((err) => {
+          this.$set(account, "loading", false);
+          if (err.errorMessage) this.$toast.error(err.errorMessage);
+        });
+    },
+  },
 };
 </script>
 
@@ -90,23 +163,36 @@ export default {
   padding: 1rem;
   overflow: auto;
   //100vh - navbar - country-content padding - table-holder header height
-  max-height: calc(100vh - 70px - 4rem - 40px);
+  max-height: calc(100vh - 70px - 40px - 3.5rem);
+
+  table {
+    min-width: max-content;
+  }
+
   tr.detail {
     box-shadow: none !important;
     background: transparent !important;
+
+    td {
+      padding: 0.25rem 0;
+      transition: 0.2s linear;
+    }
+
     .detail-container {
-      padding: 0 !important;
+      position: relative;
+      padding: 0.25rem 0.5rem !important;
+      border: 1px solid #dbdbdb;
+      border-radius: 3px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      background: #efefef;
 
       .detail-row {
-        width: 100%;
         display: flex;
         justify-content: center;
         flex-direction: column;
-        padding: 0.5rem 1rem;
-        flex-direction: column;
-        border: 1px solid #dbdbdb;
-        background: #fafafa;
-        border-radius: 3px;
+        width: auto;
 
         section {
           background-color: transparent !important;
@@ -122,6 +208,61 @@ export default {
           }
         }
       }
+      .update-row {
+        align-self: flex-end;
+        display: flex;
+        justify-content: flex-end;
+
+        i {
+          margin-right: 0.25rem;
+        }
+
+        button {
+          height: 2rem;
+          padding: 0 0.5rem;
+          font-size: 1rem;
+          border-radius: 3px;
+          transition: 0.2s linear;
+
+          &:active {
+            transform: translateY(2px);
+          }
+        }
+      }
+    }
+  }
+  .deleting {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+
+    span {
+      margin-bottom: 0.5rem;
+      height: 1.5rem;
+      width: 1.5rem;
+    }
+    p {
+      font-weight: normal !important;
+    }
+  }
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    user-select: none;
+
+    i {
+      width: 2rem;
+      height: 2rem;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-weight: bold;
     }
   }
 }

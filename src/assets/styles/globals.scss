@@ -1,3 +1,55 @@
+@import "~bulma/sass/utilities/_all";
+$primary: blueviolet;
+$primary-invert: findColorInvert($primary);
+$radius: 2px;
+$radius-large: 5px;
+$colors: (
+  "primary": (
+    $primary,
+    $primary-invert,
+  ),
+  "white": (
+    $white,
+    $black,
+  ),
+  "black": (
+    $black,
+    $white,
+  ),
+  "light": (
+    $light,
+    $light-invert,
+  ),
+  "dark": (
+    $dark,
+    $dark-invert,
+  ),
+  "info": (
+    $info,
+    $info-invert,
+  ),
+  "success": (
+    $success,
+    $success-invert,
+  ),
+  "warning": (
+    $warning,
+    $warning-invert,
+  ),
+  "danger": (
+    $danger,
+    $danger-invert,
+  ),
+);
+
+// Links
+$link: $primary;
+$link-invert: $primary-invert;
+$link-focus-border: $primary;
+
+@import "~bulma";
+@import "~buefy/src/scss/buefy";
+
 * {
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
@@ -12,8 +64,9 @@ html {
 html {
   overflow-y: auto !important;
 }
-input{
-  font-family: inherit
+input,
+button {
+  font-family: inherit;
 }
 
 #catholic-app {
@@ -27,15 +80,7 @@ input{
   overflow: auto;
   max-width: 1024px;
   color: #2c3e50;
-  .is-primary {
-    color: ghostwhite;
-    background-color: blueviolet;
-    font-family: inherit;
-    &button:hover,
-    &.is-hovered {
-      background-color: #714dd2;
-    }
-  }
+
   .no-select {
     user-select: none;
   }
@@ -110,6 +155,10 @@ input{
       background: #8a2be21c;
     }
   }
+  .close-size {
+    font-size: 1.75rem;
+    cursor: pointer;
+  }
   .truncate {
     width: auto;
     overflow: hidden;
@@ -160,7 +209,7 @@ input{
       margin-bottom: 0;
       flex: 1;
     }
-    
+
     .field {
       margin-bottom: 0;
       margin: 0 1rem;
@@ -219,14 +268,14 @@ input{
   }
 }
 
-.loading-primary,
+.loading-dark,
 .loading-light {
   position: relative;
   pointer-events: none;
   text-indent: -99999px;
 }
-.loading-primary:after,
-.loading-primary:before,
+.loading-dark:after,
+.loading-dark:before,
 .loading-light:after,
 .loading-light:before {
   top: 0;
@@ -255,14 +304,14 @@ input{
   -moz-animation: rotate 1s infinite linear;
   -o-animation: rotate 1s infinite linear;
 }
-.loading-primary:before {
+.loading-dark:before {
   border-left-color: #2c3e50;
   animation: rotate 0.5s infinite linear;
   -webkit-animation: rotate 0.5s infinite linear;
   -moz-animation: rotate 0.5s infinite linear;
   -o-animation: rotate 0.5s infinite linear;
 }
-.loading-primary:after {
+.loading-dark:after {
   border-bottom-color: #2c3e50;
   animation: rotate 1s infinite linear;
   -webkit-animation: rotate 1s infinite linear;
@@ -330,7 +379,7 @@ input{
   flex-direction: column;
 
   .loading-light,
-  .loading-primary {
+  .loading-dark {
     width: 1.5rem;
     height: 1.5rem;
   }
@@ -400,7 +449,7 @@ input{
   color: inherit;
 }
 
-.ema-scrollBar{
+.ema-scrollBar {
   &::-webkit-scrollbar {
     width: 10px;
   }
