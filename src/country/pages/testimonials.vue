@@ -21,7 +21,7 @@
           <p>Fetching...</p>
         </div>
 
-        <div class="ema-grids" v-if="showTestimonials">
+        <div class="ema-grids" v-else-if="showTestimonials">
           <video-card
             v-for="testimonial in shownTestimonials"
             :key="testimonial.id"
@@ -42,6 +42,23 @@
         <div class="page-error" v-else-if="!state.loading">
           <p>There are no testimonials available, For now!</p>
         </div>
+
+        <!-- pagination -->
+
+        <b-pagination
+          :total="pagination.total || 0"
+          :range-before="1"
+          :range-after="1"
+          :per-page="pagination.per_page || 0"
+          :current.sync="currentPage"
+          aria-next-label="Next page"
+          aria-previous-label="Previous page"
+          aria-page-label="Page"
+          aria-current-label="Current page"
+          v-if="showPagination"
+          class="my-3"
+          @change="changedPage"
+        ></b-pagination>
       </div>
     </div>
     <update-testimonial
@@ -67,6 +84,8 @@ export default {
       CancelAxios: null,
       objectToUpdate: null,
       searchedTitle: "",
+      pagination: {},
+      currentPage: 1,
     };
   },
   computed: {
@@ -84,27 +103,38 @@ export default {
           .includes(this.searchedTitle.toLowerCase())
       );
     },
+    showPagination() {
+      if (
+        !this.state.loading &&
+        this.pagination &&
+        this.pagination.total &&
+        this.pagination.per_page &&
+        this.pagination.total > this.pagination.per_page
+      )
+        return true;
+      return false;
+    },
   },
   destroyed() {
     if (typeof this.CancelAxios == "function") this.CancelAxios();
   },
   beforeMount() {
-    this.fetchData();
+    this.fetchData(this.currentPage);
   },
   methods: {
-    fetchData() {
+    fetchData(page) {
       const CancelToken = this.$CancelToken();
       let CANCEL_TOKEN;
       this.state.loading = true;
       this.axios
-        .get("testimonial", {
+        .get(`testimonial?page=${page ? page : 1}`, {
           cancelToken: new CancelToken(function executor(token) {
             CANCEL_TOKEN = token;
           }),
         })
         .then((res) => {
-          this.testimonials = res.data.data;
-          console.log(this.testimonials);
+          this.$set(this, "testimonials", res.data.data);
+          this.$set(this, "pagination", res.data.meta);
           this.state.loading = false;
         })
         .catch((err) => {
@@ -115,7 +145,7 @@ export default {
     },
     refresh() {
       this.state.is_refreshing = true;
-      this.fetchData();
+      this.fetchData(this.currentPage);
     },
     testimonialCreated(createdItem) {
       this.testimonials = [createdItem].concat(this.testimonials);
@@ -133,6 +163,9 @@ export default {
     },
     editTestimonial(itemToEdit) {
       this.objectToUpdate = itemToEdit;
+    },
+    changedPage(page) {
+      this.fetchData(page);
     },
   },
 };

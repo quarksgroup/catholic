@@ -19,7 +19,7 @@
         <div class="loading-component loading-dark" />
         <p>Loading Announcements...</p>
       </div>
-      <div class="ema-1c-grids" v-if="showAnnouncements">
+      <div class="ema-1c-grids" v-else-if="showAnnouncements">
         <announcement
           v-for="announcement in shownAnnouncements"
           :key="announcement.id"
@@ -37,6 +37,23 @@
       <div class="page-error" v-else-if="!state.loading">
         <p>There are no announcements available, For now!</p>
       </div>
+
+      <!-- pagination -->
+
+      <b-pagination
+        :total="pagination.total || 0"
+        :range-before="1"
+        :range-after="1"
+        :per-page="pagination.per_page || 0"
+        :current.sync="currentPage"
+        aria-next-label="Next page"
+        aria-previous-label="Previous page"
+        aria-page-label="Page"
+        aria-current-label="Current page"
+        v-if="showPagination"
+        class="my-3"
+        @change="changedPage"
+      ></b-pagination>
     </div>
     <update-announcement
       v-if="showUpdateForm"
@@ -61,6 +78,8 @@ export default {
       CancelAxios: null,
       objectToUpdate: null,
       searchedTitle: "",
+      pagination: {},
+      currentPage: 1,
     };
   },
   computed: {
@@ -81,27 +100,38 @@ export default {
           .includes(this.searchedTitle.toLowerCase())
       );
     },
+    showPagination() {
+      if (
+        !this.state.loading &&
+        this.pagination &&
+        this.pagination.total &&
+        this.pagination.per_page &&
+        this.pagination.total > this.pagination.per_page
+      )
+        return true;
+      return false;
+    },
   },
   beforeMount() {
-    this.fetchData();
+    this.fetchData(this.currentPage);
   },
   destroyed() {
     if (typeof this.CancelAxios == "function") this.CancelAxios();
   },
   methods: {
-    fetchData() {
+    fetchData(page) {
       const CancelToken = this.$CancelToken();
       let CANCEL_TOKEN;
       this.state.loading = true;
       this.axios
-        .get("announcement", {
+        .get(`announcement?page=${page ? page : 1}`, {
           cancelToken: new CancelToken(function executor(token) {
             CANCEL_TOKEN = token;
           }),
         })
         .then((res) => {
-          this.announcements = res.data.data;
-          console.log(this.announcements);
+          this.$set(this, "announcements", res.data.data);
+          this.$set(this, "pagination", res.data.meta);
           this.state.loading = false;
         })
         .catch((err) => {
@@ -130,6 +160,9 @@ export default {
     clear() {
       this.state.loading = false;
       this.state.error = "";
+    },
+    changedPage(page) {
+      this.fetchData(page);
     },
   },
 };

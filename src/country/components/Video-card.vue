@@ -80,15 +80,12 @@ export default {
   methods: {
     readMore() {
       this.$modal.show(`read-more`, { item: this.video });
-      console.log(this.video);
     },
     deleteVideo() {
-      console.log(this.video);
       this.state.deleting = true;
       this.axios
         .delete(`${this.from}/${this.video.id}`)
         .then((res) => {
-          console.log(res);
           this.state.deleting = false;
           if (res.status == 200) this.$emit("deleted", this.video);
           if (res.data.message) this.$toast.error(res.data.message);

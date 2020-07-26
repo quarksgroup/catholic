@@ -47,7 +47,7 @@
           <b-radio v-model="isPublic" :native-value="false">Private</b-radio>
         </b-field>
 
-        <div class="select-grids">
+        <div class="select-grids" v-show="!isPublic">
           <b-field label="Country:">
             <b-select
               placeholder="select country..."
@@ -147,7 +147,6 @@ export default {
       return this.$store.getters.location;
     },
     countryOptions() {
-      console.log(this.location);
       return [this.default, this.$countryOptions()].flat();
     },
     provinceOptions() {
@@ -206,7 +205,6 @@ export default {
           })
         })
         .then(res => {
-          console.log(res);
           this.state.loading = false;
           if (res.data.message) this.$toast.success(res.data.message);
           if (res.status == 201) this.$emit("created", res.data.data);

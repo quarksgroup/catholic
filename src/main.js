@@ -76,13 +76,10 @@ axiosInstance.interceptors.response.use(
     console.log(error.request);
     console.log(error.response);
     console.log(error.errorMessage);
-    console.log(process.env.VUE_APP_BASEURL);
     try {
-      // if (error.response && error.response.status === 401)
-      //   //logout
-      //   location.reload();
-      // else
-      if (error.response && error.response.status === 404)
+      if (error.response && error.response.status === 401)
+        router.push("/logout");
+      else if (error.response && error.response.status === 404)
         return Promise.reject({
           errorMessage: "can't find the resource you are searching for!",
         });
@@ -145,6 +142,7 @@ Vue.prototype.$groupOptions = (sector) => {
 };
 Vue.prototype.$CancelToken = () => axios.CancelToken;
 Vue.config.productionTip = false;
+
 new Vue({
   router,
   store,

@@ -19,6 +19,8 @@
         :loading="state.loading"
         @deleteAccount="accountDeleted"
         :searchedName="searchedName"
+        :pagination="pagination"
+        @fetchAccounts="fetchAccounts"
       />
     </div>
     <add-account />
@@ -34,21 +36,24 @@ export default {
     return {
       state: { loading: false },
       accounts: [],
+      pagination: {},
       searchedName: "",
     };
   },
   computed: {},
-  mounted() {
-    this.fetchAccounts();
+  beforeMount() {
+    this.fetchAccounts(1);
   },
   methods: {
-    fetchAccounts() {
+    fetchAccounts(page) {
       this.state.loading = true;
       this.axios
-        .get("users-list")
+        .get(`users-list?page=${page ? page : 1}`)
         .then((res) => {
-          this.accounts = res.data.data;
+          this.$set(this, "accounts", res.data.data);
+          this.$set(this, "pagination", res.data.meta);
           this.state.loading = false;
+          console.log(res);
         })
         .catch((err) => {
           this.state.loading = false;

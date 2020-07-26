@@ -19,7 +19,7 @@
         <div class="loading-component loading-dark" />
         <p>Loading studies...</p>
       </div>
-      <div class="ema-grids" v-if="showStudies">
+      <div class="ema-grids" v-else-if="showStudies">
         <video-card
           v-for="study in shownStudies"
           :key="study.id"
@@ -38,6 +38,23 @@
       <div class="page-error" v-else-if="!state.loading">
         <p>There are no Studies available, For now!</p>
       </div>
+
+      <!-- pagination -->
+
+      <b-pagination
+        :total="pagination.total || 0"
+        :range-before="1"
+        :range-after="1"
+        :per-page="pagination.per_page || 0"
+        :current.sync="currentPage"
+        aria-next-label="Next page"
+        aria-previous-label="Previous page"
+        aria-page-label="Page"
+        aria-current-label="Current page"
+        v-if="showPagination"
+        class="my-3"
+        @change="changedPage"
+      ></b-pagination>
     </div>
     <update-study
       v-if="showUpdateForm"
@@ -63,6 +80,8 @@ export default {
       CancelAxios: null,
       objectToUpdate: null,
       searchedTitle: "",
+      pagination: {},
+      currentPage: 1,
     };
   },
   computed: {
@@ -78,27 +97,38 @@ export default {
         study.title.toLowerCase().includes(this.searchedTitle.toLowerCase())
       );
     },
+    showPagination() {
+      if (
+        !this.state.loading &&
+        this.pagination &&
+        this.pagination.total &&
+        this.pagination.per_page &&
+        this.pagination.total > this.pagination.per_page
+      )
+        return true;
+      return false;
+    },
   },
   beforeMount() {
-    this.fetchData();
+    this.fetchData(this.currentPage);
   },
   destroyed() {
     if (typeof this.CancelAxios == "function") this.CancelAxios();
   },
   methods: {
-    async fetchData() {
+    fetchData(page) {
       const CancelToken = this.$CancelToken();
       let CANCEL_TOKEN;
       this.state.loading = true;
       this.axios
-        .get("inyigisho", {
+        .get(`inyigisho?page=${page ? page : 1}`, {
           cancelToken: new CancelToken(function executor(token) {
             CANCEL_TOKEN = token;
           }),
         })
         .then((res) => {
-          this.studies = res.data.data;
-          console.log(this.studies);
+          this.$set(this, "studies", res.data.data);
+          this.$set(this, "pagination", res.data.meta);
           this.state.loading = false;
         })
         .catch((err) => {
@@ -123,6 +153,9 @@ export default {
     },
     editStudy(itemToEdit) {
       this.objectToUpdate = itemToEdit;
+    },
+    changedPage(page) {
+      this.fetchData(page);
     },
   },
 };

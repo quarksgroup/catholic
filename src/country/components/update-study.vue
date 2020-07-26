@@ -48,7 +48,7 @@
           <b-radio v-model="isPublic" :native-value="false">Private</b-radio>
         </b-field>
 
-        <div class="select-grids">
+        <div class="select-grids" v-show="!isPublic">
           <b-field label="Country:">
             <b-select
               placeholder="select country..."
@@ -127,12 +127,12 @@
 export default {
   name: "edit-study-component",
   props: {
-    study: Object
+    study: Object,
   },
   data() {
     return {
       state: {
-        loading: true
+        loading: true,
       },
       title: "",
       message: "",
@@ -143,7 +143,7 @@ export default {
       sector: { name: "all", id: null },
       group: { name: "all", id: null },
       default: { name: "all", id: null },
-      CancelRequest: null
+      CancelRequest: null,
     };
   },
   computed: {
@@ -151,7 +151,6 @@ export default {
       return this.$store.getters.location;
     },
     countryOptions() {
-      console.log(this.location);
       return [this.default, this.$countryOptions()].flat();
     },
     provinceOptions() {
@@ -162,7 +161,7 @@ export default {
     },
     groupOptions() {
       return [this.default, this.$groupOptions(this.sector)].flat();
-    }
+    },
   },
   watch: {
     country() {
@@ -179,7 +178,7 @@ export default {
       handler: {
         this.$set(this, "group", this.default);
       }
-    }
+    },
   },
   beforeMount() {
     this.title = this.study.title;
@@ -189,28 +188,28 @@ export default {
     this.country = this.study.country
       ? {
           name: this.study.country.name,
-          id: this.study.country.id
+          id: this.study.country.id,
         }
       : this.default;
     this.province = this.study.province
       ? {
           name: this.study.province.name,
-          id: this.study.province.id
+          id: this.study.province.id,
         }
       : this.default;
     this.sector = this.study.sector
       ? {
           name: this.study.sector.name,
-          id: this.study.sector.id
+          id: this.study.sector.id,
         }
       : this.default;
     this.group = this.study["groupe_de_priere"]
       ? {
           name: this.study["groupe_de_priere"].name,
-          id: this.study["groupe_de_priere"].id
+          id: this.study["groupe_de_priere"].id,
         }
       : this.default;
-      this.state.loading = false
+    this.state.loading = false;
   },
   beforeDestroy() {
     this.CancelRequestFunction();
@@ -229,25 +228,25 @@ export default {
         country_id: this.country.id,
         province_id: this.province.id,
         sector_id: this.sector.id,
-        group_id: this.group.id
+        group_id: this.group.id,
       };
       Object.keys(reqData).map(
-        key => reqData[key] == null && delete reqData[key]
+        (key) => reqData[key] == null && delete reqData[key]
       );
       this.axios
         .put(`inyigisho/${this.study.id}`, reqData, {
           cancelToken: new CancelToken(function executor(token) {
             CANCEL_TOKEN = token;
-          })
+          }),
         })
-        .then(res => {
+        .then((res) => {
           console.log(res);
           this.state.loading = false;
           if (res.data.message) this.$toast.success(res.data.message);
           if (res.status == 200) this.$emit("updated", res.data.data);
           this.$emit("close");
         })
-        .catch(err => {
+        .catch((err) => {
           this.state.loading = false;
           console.log(err);
           if (err.errorMessage) this.$toast.error(err.errorMessage);
@@ -257,8 +256,8 @@ export default {
     CancelRequestFunction() {
       if (typeof this.CancelRequest == "function") this.CancelRequest();
       this.state.loading = false;
-    }
-  }
+    },
+  },
 };
 </script>
 

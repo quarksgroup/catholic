@@ -34,7 +34,7 @@
           <b-radio v-model="isPublic" :native-value="false">Private</b-radio>
         </b-field>
 
-        <div class="select-grids">
+        <div class="select-grids" v-show="!isPublic">
           <b-field label="Country:">
             <b-select
               placeholder="select country..."
@@ -113,12 +113,12 @@
 export default {
   name: "edit-announcement-component",
   props: {
-    announcement: Object
+    announcement: Object,
   },
   data() {
     return {
       state: {
-        loading: true
+        loading: true,
       },
       title: "",
       message: "",
@@ -128,7 +128,7 @@ export default {
       sector: { name: "all", id: null },
       group: { name: "all", id: null },
       default: { name: "all", id: null },
-      CancelRequest: null
+      CancelRequest: null,
     };
   },
   computed: {
@@ -147,7 +147,7 @@ export default {
     },
     groupOptions() {
       return [this.default, this.$groupOptions(this.sector)].flat();
-    }
+    },
   },
   watch: {
     country() {
@@ -164,7 +164,7 @@ export default {
       handler: {
         this.$set(this, "group", this.default);
       }
-    }
+    },
   },
   beforeMount() {
     this.title = this.announcement.title;
@@ -173,29 +173,28 @@ export default {
     this.country = this.announcement.country
       ? {
           name: this.announcement.country.name,
-          id: this.announcement.country.id
+          id: this.announcement.country.id,
         }
       : this.default;
     this.province = this.announcement.province
       ? {
           name: this.announcement.province.name,
-          id: this.announcement.province.id
+          id: this.announcement.province.id,
         }
       : this.default;
     this.sector = this.announcement.sector
       ? {
           name: this.announcement.sector.name,
-          id: this.announcement.sector.id
+          id: this.announcement.sector.id,
         }
       : this.default;
     this.group = this.announcement["groupe_de_priere"]
       ? {
           name: this.announcement["groupe_de_priere"].name,
-          id: this.announcement["groupe_de_priere"].id
+          id: this.announcement["groupe_de_priere"].id,
         }
       : this.default;
     this.state.loading = false;
-    console.log(this.country);
   },
   beforeDestroy() {
     this.CancelRequestFunction();
@@ -213,25 +212,24 @@ export default {
         country_id: this.country.id,
         province_id: this.province.id,
         sector_id: this.sector.id,
-        group_id: this.group.id
+        group_id: this.group.id,
       };
       Object.keys(reqData).map(
-        key => reqData[key] == null && delete reqData[key]
+        (key) => reqData[key] == null && delete reqData[key]
       );
       this.axios
         .put(`announcement/${this.announcement.id}`, reqData, {
           cancelToken: new CancelToken(function executor(token) {
             CANCEL_TOKEN = token;
-          })
+          }),
         })
-        .then(res => {
-          console.log(res);
+        .then((res) => {
           this.state.loading = false;
           if (res.data.message) this.$toast.success(res.data.message);
           if (res.status == 200) this.$emit("updated", res.data.data);
           this.$emit("close");
         })
-        .catch(err => {
+        .catch((err) => {
           this.state.loading = false;
           console.log(err);
           if (err.errorMessage) this.$toast.error(err.errorMessage);
@@ -251,8 +249,8 @@ export default {
       this.group = this.default;
       this.CancelRequest = null;
       this.isPublic = false;
-    }
-  }
+    },
+  },
 };
 </script>
 

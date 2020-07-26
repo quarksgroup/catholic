@@ -33,7 +33,7 @@
           <b-radio v-model="isPublic" :native-value="false">Private</b-radio>
         </b-field>
 
-        <div class="select-grids">
+        <div class="select-grids" v-show="!isPublic">
           <b-field label="Country:">
             <b-select
               placeholder="select country..."
@@ -114,7 +114,7 @@ export default {
   data() {
     return {
       state: {
-        loading: false
+        loading: false,
       },
       title: "",
       message: "",
@@ -124,7 +124,7 @@ export default {
       sector: { name: "all", id: null },
       group: { name: "all", id: null },
       default: { name: "all", id: null },
-      CancelRequest: null
+      CancelRequest: null,
     };
   },
   computed: {
@@ -132,7 +132,6 @@ export default {
       return this.$store.getters.location;
     },
     countryOptions() {
-      console.log(this.location);
       return [this.default, this.$countryOptions()].flat();
     },
     provinceOptions() {
@@ -143,7 +142,7 @@ export default {
     },
     groupOptions() {
       return [this.default, this.$groupOptions(this.sector)].flat();
-    }
+    },
   },
   watch: {
     country() {
@@ -160,7 +159,7 @@ export default {
       handler: {
         this.$set(this, "group", this.default);
       }
-    }
+    },
   },
   mounted() {},
   beforeDestroy() {
@@ -178,25 +177,24 @@ export default {
         country_id: this.country.id,
         province_id: this.province.id,
         sector_id: this.sector.id,
-        group_id: this.group.id
+        group_id: this.group.id,
       };
       Object.keys(reqData).map(
-        key => reqData[key] == null && delete reqData[key]
+        (key) => reqData[key] == null && delete reqData[key]
       );
       this.axios
         .post("announcement", reqData, {
           cancelToken: new CancelToken(function executor(token) {
             CANCEL_TOKEN = token;
-          })
+          }),
         })
-        .then(res => {
-          console.log(res);
+        .then((res) => {
           this.state.loading = false;
           if (res.data.message) this.$toast.success(res.data.message);
           if (res.status == 201) this.$emit("created", res.data.data);
           this.clear();
         })
-        .catch(err => {
+        .catch((err) => {
           this.state.loading = false;
           console.log(err);
           if (err.errorMessage) this.$toast.error(err.errorMessage);
@@ -216,8 +214,8 @@ export default {
       this.group = this.default;
       this.CancelRequest = null;
       this.isPublic = false;
-    }
-  }
+    },
+  },
 };
 </script>
 

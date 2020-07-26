@@ -6,6 +6,11 @@
       narrowed
       striped
       sticky-headers
+      :paginated="showPagination"
+      :backend-pagination="showPagination"
+      :total="pagination.total || 0"
+      :per-page="pagination.per_page || 0"
+      @page-change="changedPage"
       :data="loading ? [] : shownAccounts"
       :opened-detailed="openedDetail"
       detailed
@@ -91,13 +96,6 @@
           </div>
         </section>
       </template>
-
-      <!-- footer slot -->
-      <template slot="footer" v-if="haveAccounts">
-        <div class="has-text-centered p-3">
-          <i class="fa fa-infinity mr-1" />End
-        </div>
-      </template>
     </b-table>
   </div>
 </template>
@@ -113,6 +111,7 @@ export default {
     accounts: Array,
     loading: Boolean,
     searchedName: String,
+    pagination: Object,
   },
   data() {
     return {
@@ -131,10 +130,19 @@ export default {
         account.name.toLowerCase().includes(this.searchedName.toLowerCase())
       );
     },
+    showPagination() {
+      if (
+        !this.loading &&
+        this.pagination &&
+        this.pagination.total &&
+        this.pagination.per_page &&
+        this.pagination.total > this.pagination.per_page
+      )
+        return true;
+      return false;
+    },
   },
-  mounted() {
-    console.log("this.shownAccounts");
-  },
+  mounted() {},
   methods: {
     toggle(row) {
       this.$refs.accountsTable.toggleDetails(row);
@@ -153,6 +161,9 @@ export default {
           this.$set(account, "loading", false);
           if (err.errorMessage) this.$toast.error(err.errorMessage);
         });
+    },
+    changedPage(page) {
+      this.$emit("fetchAccounts", page);
     },
   },
 };
