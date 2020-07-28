@@ -49,7 +49,7 @@
         </b-field>
 
         <div class="select-grids" v-show="!isPublic">
-          <b-field label="Country:">
+          <b-field label="Country:" v-if="showCountry">
             <b-select
               placeholder="select country..."
               class="br-1"
@@ -65,7 +65,7 @@
             </b-select>
           </b-field>
 
-          <b-field label="Province:">
+          <b-field label="Province:" v-if="showProvince">
             <b-select
               placeholder="select province..."
               class="br-1"
@@ -81,7 +81,7 @@
             </b-select>
           </b-field>
 
-          <b-field label="Sector:">
+          <b-field label="Sector:" v-if="showSector">
             <b-select
               placeholder="select sector..."
               class="br-1"
@@ -97,7 +97,7 @@
             </b-select>
           </b-field>
 
-          <b-field label="Groupe de priere:">
+          <b-field label="Groupe de priere:" v-if="showGroup">
             <b-select
               placeholder="select Gr.Priere..."
               class="br-1"
@@ -162,6 +162,27 @@ export default {
     groupOptions() {
       return [this.default, this.$groupOptions(this.sector)].flat();
     },
+    ActiveLocation() {
+      return this.$store.getters.ActiveLocation;
+    },
+    showCountry() {
+      if (this.ActiveLocation.country)
+        this.country = this.ActiveLocation.country;
+      return this.ActiveLocation.country ? false : true;
+    },
+    showProvince() {
+      if (this.ActiveLocation.province)
+        this.province = this.ActiveLocation.province;
+      return this.ActiveLocation.province ? false : true;
+    },
+    showSector() {
+      if (this.ActiveLocation.sector) this.sector = this.ActiveLocation.sector;
+      return this.ActiveLocation.sector ? false : true;
+    },
+    showGroup() {
+      if (this.ActiveLocation.group) this.group = this.ActiveLocation.group;
+      return this.ActiveLocation.group ? false : true;
+    },
   },
   watch: {
     country() {
@@ -225,10 +246,16 @@ export default {
         body: this.message,
         video_url: this.VideoURL,
         public: this.isPublic,
-        country_id: this.country.id,
-        province_id: this.province.id,
-        sector_id: this.sector.id,
-        group_id: this.group.id,
+        country_id: this.showCountry
+          ? this.ActiveLocation.country.id
+          : this.country.id,
+        province_id: this.showProvince
+          ? this.ActiveLocation.province.id
+          : this.province.id,
+        sector_id: this.showSector
+          ? this.ActiveLocation.sector.id
+          : this.sector.id,
+        group_id: this.showGroup ? this.ActiveLocation.group.id : this.group.id,
       };
       Object.keys(reqData).map(
         (key) => reqData[key] == null && delete reqData[key]

@@ -17,7 +17,7 @@ export default {
   name: "ema-app-entry-point",
   data() {
     return {
-      state: { refreshing: false, showError: false }
+      state: { refreshing: false, showError: false },
     };
   },
   created() {
@@ -30,12 +30,52 @@ export default {
     location() {
       return this.$store.getters.location;
     },
+    user() {
+      return this.$store.getters.userDetails;
+    },
+    ActiveLocation() {
+      return this.$store.getters.ActiveLocation;
+    },
     InitializationIncomplete() {
-      return (
-        Object.keys(this.location).filter(key => this.location[key] == null)
-          .length > 0
-      );
-    }
+      let { country, province, sector, group } = this.ActiveLocation;
+      if (this.user.role.slug == "group_de_priere") {
+        return (
+          Object.keys(this.ActiveLocation).filter(
+            (key) => this.ActiveLocation[key] == null
+          ).length > 0
+        );
+      }
+      if (this.user.role.slug == "sector") {
+        if (
+          country != null &&
+          province != null &&
+          sector != null &&
+          this.location.groups != null
+        )
+          return false;
+        else return true;
+      }
+      if (this.user.role.slug == "province") {
+        if (
+          country != null &&
+          province != null &&
+          this.location.sectors != null &&
+          this.location.groups != null
+        )
+          return false;
+        else return true;
+      }
+      if (this.user.role.slug == "country") {
+        if (
+          country != null &&
+          this.location.provinces != null &&
+          this.location.sectors != null &&
+          this.location.groups != null
+        )
+          return false;
+        else return true;
+      }
+    },
   },
   watch: {
     IsLoading() {
@@ -52,15 +92,15 @@ export default {
           }
         }
       }
-    }
+    },
   },
   mounted() {},
   methods: {
     refresh() {
       this.state.refreshing = true;
       this.$store.dispatch("STARTUP");
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss" >

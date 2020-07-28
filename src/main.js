@@ -1,5 +1,5 @@
 import Vue from "vue";
-import axios from "axios";
+import axiosInstance from "./axios";
 import Buefy from "buefy";
 import App from "./App.vue";
 import store from "./store";
@@ -40,66 +40,9 @@ Vue.use(VueIziToast, {
   messageColor: "#8a2be2",
   iconColor: "#8a2be2",
 });
+Vue.use(VueAxios, axiosInstance);
 
 Vue.component("ellipsis", ellipsis);
-
-// axios configs
-// -----------------------------------------------------------------------------
-
-const axiosInstance = axios.create({
-  baseURL: process.env.VUE_APP_BASEURL,
-});
-
-axiosInstance.interceptors.request.use(
-  (config) => {
-    if (sessionStorage.getItem("token"))
-      config.headers["Authorization"] =
-        "Bearer " + sessionStorage.getItem("token");
-    return config;
-  },
-
-  (error) => {
-    // if (navigator.onLine === false)
-    //   Vue.prototype.$snotify.error("Please check internet connectivity!");
-    console.log("from MAIN/request: error.code" + error.code);
-    return Promise.reject(error);
-  }
-);
-
-axiosInstance.interceptors.response.use(
-  (response) => {
-    return Promise.resolve(response);
-  },
-  (error) => {
-    console.log(error);
-    console.log(error.code);
-    console.log(error.request);
-    console.log(error.response);
-    console.log(error.errorMessage);
-    try {
-      if (error.response && error.response.status === 401)
-        router.push("/logout");
-      else if (error.response && error.response.status === 404)
-        return Promise.reject({
-          errorMessage: "can't find the resource you are searching for!",
-        });
-      else if (error.code === "ECONNABORTED")
-        return Promise.reject({
-          errorMessage: "Your connection is weak! try again",
-        });
-      else if (axios.isCancel(error)) return;
-      else
-        return Promise.reject({
-          errorMessage: error.response.data.message || error,
-        });
-    } catch {
-      return Promise.reject({
-        errorMessage: "something is wrong! try refreshing this page",
-      });
-    }
-  }
-);
-Vue.use(VueAxios, axiosInstance);
 
 Vue.prototype.$countryOptions = () => {
   let location = store.getters.location;
@@ -140,7 +83,8 @@ Vue.prototype.$groupOptions = (sector) => {
     );
   else return [];
 };
-Vue.prototype.$CancelToken = () => axios.CancelToken;
+
+
 Vue.config.productionTip = false;
 
 new Vue({

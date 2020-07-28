@@ -48,8 +48,8 @@
           <b-radio v-model="isPublic" :native-value="false">Private</b-radio>
         </b-field>
 
-        <div class="select-grids"  v-show="!isPublic">
-          <b-field label="Country:">
+        <div class="select-grids" v-show="!isPublic">
+          <b-field label="Country:" v-if="showCountry">
             <b-select
               placeholder="select country..."
               class="br-1"
@@ -65,7 +65,7 @@
             </b-select>
           </b-field>
 
-          <b-field label="Province:">
+          <b-field label="Province:" v-if="showProvince">
             <b-select
               placeholder="select province..."
               class="br-1"
@@ -81,7 +81,7 @@
             </b-select>
           </b-field>
 
-          <b-field label="Sector:">
+          <b-field label="Sector:" v-if="showSector">
             <b-select
               placeholder="select sector..."
               class="br-1"
@@ -97,7 +97,7 @@
             </b-select>
           </b-field>
 
-          <b-field label="Groupe de priere:">
+          <b-field label="Groupe de priere:" v-if="showGroup">
             <b-select
               placeholder="select Gr.Priere..."
               class="br-1"
@@ -127,12 +127,12 @@
 export default {
   name: "edit-testimonial-component",
   props: {
-    testimonial: Object
+    testimonial: Object,
   },
   data() {
     return {
       state: {
-        loading: true
+        loading: true,
       },
       title: "",
       message: "",
@@ -143,7 +143,7 @@ export default {
       sector: { name: "all", id: null },
       group: { name: "all", id: null },
       default: { name: "all", id: null },
-      CancelRequest: null
+      CancelRequest: null,
     };
   },
   computed: {
@@ -161,7 +161,28 @@ export default {
     },
     groupOptions() {
       return [this.default, this.$groupOptions(this.sector)].flat();
-    }
+    },
+    ActiveLocation() {
+      return this.$store.getters.ActiveLocation;
+    },
+    showCountry() {
+      if (this.ActiveLocation.country)
+        this.country = this.ActiveLocation.country;
+      return this.ActiveLocation.country ? false : true;
+    },
+    showProvince() {
+      if (this.ActiveLocation.province)
+        this.province = this.ActiveLocation.province;
+      return this.ActiveLocation.province ? false : true;
+    },
+    showSector() {
+      if (this.ActiveLocation.sector) this.sector = this.ActiveLocation.sector;
+      return this.ActiveLocation.sector ? false : true;
+    },
+    showGroup() {
+      if (this.ActiveLocation.group) this.group = this.ActiveLocation.group;
+      return this.ActiveLocation.group ? false : true;
+    },
   },
   watch: {
     country() {
@@ -178,7 +199,7 @@ export default {
       handler: {
         this.$set(this, "group", this.default);
       }
-    }
+    },
   },
   beforeMount() {
     this.title = this.testimonial.title;
@@ -188,25 +209,25 @@ export default {
     this.country = this.testimonial.country
       ? {
           name: this.testimonial.country.name,
-          id: this.testimonial.country.id
+          id: this.testimonial.country.id,
         }
       : this.default;
     this.province = this.testimonial.province
       ? {
           name: this.testimonial.province.name,
-          id: this.testimonial.province.id
+          id: this.testimonial.province.id,
         }
       : this.default;
     this.sector = this.testimonial.sector
       ? {
           name: this.testimonial.sector.name,
-          id: this.testimonial.sector.id
+          id: this.testimonial.sector.id,
         }
       : this.default;
     this.group = this.testimonial["groupe_de_priere"]
       ? {
           name: this.testimonial["groupe_de_priere"].name,
-          id: this.testimonial["groupe_de_priere"].id
+          id: this.testimonial["groupe_de_priere"].id,
         }
       : this.default;
 
@@ -226,27 +247,33 @@ export default {
         body: this.message,
         video_url: this.VideoURL,
         public: this.isPublic,
-        country_id: this.country.id,
-        province_id: this.province.id,
-        sector_id: this.sector.id,
-        group_id: this.group.id
+        country_id: this.showCountry
+          ? this.ActiveLocation.country.id
+          : this.country.id,
+        province_id: this.showProvince
+          ? this.ActiveLocation.province.id
+          : this.province.id,
+        sector_id: this.showSector
+          ? this.ActiveLocation.sector.id
+          : this.sector.id,
+        group_id: this.showGroup ? this.ActiveLocation.group.id : this.group.id,
       };
       Object.keys(reqData).map(
-        key => reqData[key] == null && delete reqData[key]
+        (key) => reqData[key] == null && delete reqData[key]
       );
       this.axios
         .put(`testimonial/${this.testimonial.id}`, reqData, {
           cancelToken: new CancelToken(function executor(token) {
             CANCEL_TOKEN = token;
-          })
+          }),
         })
-        .then(res => {
+        .then((res) => {
           this.state.loading = false;
           if (res.data.message) this.$toast.success(res.data.message);
           if (res.status == 200) this.$emit("updated", res.data.data);
           this.$emit("close");
         })
-        .catch(err => {
+        .catch((err) => {
           this.state.loading = false;
           console.log(err);
           if (err.errorMessage) this.$toast.error(err.errorMessage);
@@ -256,8 +283,8 @@ export default {
     CancelRequestFunction() {
       if (typeof this.CancelRequest == "function") this.CancelRequest();
       this.state.loading = false;
-    }
-  }
+    },
+  },
 };
 </script>
 
