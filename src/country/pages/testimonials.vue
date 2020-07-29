@@ -94,7 +94,7 @@ export default {
       else return false;
     },
     showUpdateForm() {
-      return this.objectToUpdate ? true : false;
+      return this.objectToUpdate != null ? true : false;
     },
     shownTestimonials() {
       return this.testimonials.filter((testimonial) =>
@@ -161,8 +161,9 @@ export default {
           this.$set(this.testimonials, key, updatedItem)
       );
     },
-    editTestimonial(itemToEdit) {
-      this.objectToUpdate = itemToEdit;
+    async editTestimonial(itemToEdit) {
+      if (this.showUpdateForm) await this.$set(this, "objectToUpdate", null);
+      this.$set(this, "objectToUpdate", itemToEdit);
     },
     changedPage(page) {
       this.fetchData(page);

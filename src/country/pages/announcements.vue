@@ -91,7 +91,7 @@ export default {
       else return false;
     },
     showUpdateForm() {
-      return this.objectToUpdate ? true : false;
+      return this.objectToUpdate != null ? true : false;
     },
     shownAnnouncements() {
       return this.announcements.filter((announcement) =>
@@ -154,8 +154,9 @@ export default {
           this.$set(this.announcements, key, updatedItem)
       );
     },
-    editAnnouncement(itemToEdit) {
-      this.objectToUpdate = itemToEdit;
+    async editAnnouncement(itemToEdit) {
+      if (this.showUpdateForm) await this.$set(this, "objectToUpdate", null);
+      this.$set(this, "objectToUpdate", itemToEdit);
     },
     clear() {
       this.state.loading = false;

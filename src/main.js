@@ -11,6 +11,7 @@ import "@/assets/styles/globals.scss";
 import VueIziToast from "vue-izitoast";
 import "izitoast/dist/css/iziToast.min.css";
 import ellipsis from "./globals/components/ellipsis.vue";
+import SelectGrids from "./globals/components/select-grids.vue";
 
 Vue.use(VModal, {
   dynamicDefault: {
@@ -43,6 +44,7 @@ Vue.use(VueIziToast, {
 Vue.use(VueAxios, axiosInstance);
 
 Vue.component("ellipsis", ellipsis);
+Vue.component("select-grids", SelectGrids);
 
 Vue.prototype.$countryOptions = () => {
   let location = store.getters.location;
@@ -83,7 +85,6 @@ Vue.prototype.$groupOptions = (sector) => {
     );
   else return [];
 };
-
 
 Vue.config.productionTip = false;
 

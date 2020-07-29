@@ -49,67 +49,12 @@
           />
         </b-field>
 
-        <div class="select-grids">
-          <b-field label="Country:" v-if="showCountry">
-            <b-select
-              placeholder="select country..."
-              class="br-1"
-              v-model="country"
-              validation-message=" "
-              :disabled="countryOptions.length < 2"
-            >
-              <option
-                :value="country"
-                v-for="country in countryOptions"
-                :key="country.id"
-              >{{country.name}}</option>
-            </b-select>
-          </b-field>
-
-          <b-field label="Province:" v-if="showProvince">
-            <b-select
-              placeholder="select province..."
-              class="br-1"
-              v-model="province"
-              validation-message=" "
-              :disabled="provinceOptions.length < 2"
-            >
-              <option
-                :value="province"
-                v-for="province in provinceOptions"
-                :key="province.id"
-              >{{province.name}}</option>
-            </b-select>
-          </b-field>
-
-          <b-field label="Sector:" v-if="showSector">
-            <b-select
-              placeholder="select sector..."
-              class="br-1"
-              v-model="sector"
-              validation-message=" "
-              :disabled="sectorOptions.length < 2"
-            >
-              <option
-                :value="sector"
-                v-for="sector in sectorOptions"
-                :key="sector.id"
-              >{{sector.name}}</option>
-            </b-select>
-          </b-field>
-
-          <b-field label="Groupe de priere:" v-if="showGroup">
-            <b-select
-              placeholder="select Gr.Priere..."
-              class="br-1"
-              v-model="group"
-              validation-message=" "
-              :disabled="groupOptions.length < 2"
-            >
-              <option :value="group" v-for="group in groupOptions" :key="group.id">{{group.name}}</option>
-            </b-select>
-          </b-field>
-        </div>
+        <select-grids
+          @setcountry="SetCountry"
+          @setprovince="SetProvince"
+          @setsector="SetSector"
+          @setgroup="SetGroup"
+        />
 
         <div class="control ema-btn">
           <button class="button is-primary" type="submit">create account</button>
@@ -148,18 +93,6 @@ export default {
     location() {
       return this.$store.getters.location;
     },
-    countryOptions() {
-      return [this.default, this.$countryOptions()].flat();
-    },
-    provinceOptions() {
-      return [this.default, this.$provinceOptions(this.country)].flat();
-    },
-    sectorOptions() {
-      return [this.default, this.$sectorOptions(this.province)].flat();
-    },
-    groupOptions() {
-      return [this.default, this.$groupOptions(this.sector)].flat();
-    },
     ActiveLocation() {
       return this.$store.getters.ActiveLocation;
     },
@@ -182,24 +115,6 @@ export default {
       return this.ActiveLocation.group ? false : true;
     },
   },
-  watch: {
-    country() {
-      handler: {
-        this.$set(this, "province", this.default);
-      }
-    },
-    province() {
-      handler: {
-        this.$set(this, "sector", this.default);
-      }
-    },
-    sector() {
-      handler: {
-        this.$set(this, "group", this.default);
-      }
-    },
-  },
-  mounted() {},
   beforeDestroy() {
     this.CancelRequestFunction();
   },
@@ -250,15 +165,24 @@ export default {
       if (typeof this.CancelRequest == "function") this.CancelRequest();
       this.state.loading = false;
     },
+    SetCountry(country) {
+      this.$set(this, "country", country);
+    },
+    SetProvince(province) {
+      this.$set(this, "province", province);
+    },
+    SetSector(sector) {
+      this.$set(this, "sector", sector);
+    },
+    SetGroup(group) {
+      this.$set(this, "group", group);
+    },
     clear() {
       this.name = "";
       this.username = "";
       this.phone = "";
       this.CancelRequest = null;
-      if (this.showCountry == false) this.country = this.default;
-      if (this.showProvince == false) this.province = this.default;
-      if (this.showSector == false) this.sector = this.default;
-      if (this.showGroup == false) this.group = this.default;
+      this.$emit("clear-selects");
     },
   },
 };

@@ -15,8 +15,8 @@ import navigation from "../components/navigation";
 export default {
   components: {
     navigation,
-    "read-more": () => import("../../globals/components/ReadMore")
-  }
+    "read-more": () => import("../../globals/components/ReadMore"),
+  },
 };
 </script>
 <style lang="scss">

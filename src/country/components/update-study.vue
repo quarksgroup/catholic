@@ -48,67 +48,13 @@
           <b-radio v-model="isPublic" :native-value="false">Private</b-radio>
         </b-field>
 
-        <div class="select-grids" v-show="!isPublic">
-          <b-field label="Country:" v-if="showCountry">
-            <b-select
-              placeholder="select country..."
-              class="br-1"
-              v-model="country"
-              validation-message=" "
-              :disabled="countryOptions.length < 2"
-            >
-              <option
-                :value="country"
-                v-for="country in countryOptions"
-                :key="country.id"
-              >{{country.name}}</option>
-            </b-select>
-          </b-field>
-
-          <b-field label="Province:" v-if="showProvince">
-            <b-select
-              placeholder="select province..."
-              class="br-1"
-              v-model="province"
-              validation-message=" "
-              :disabled="provinceOptions.length < 2"
-            >
-              <option
-                :value="province"
-                v-for="province in provinceOptions"
-                :key="province.id"
-              >{{province.name}}</option>
-            </b-select>
-          </b-field>
-
-          <b-field label="Sector:" v-if="showSector">
-            <b-select
-              placeholder="select sector..."
-              class="br-1"
-              v-model="sector"
-              validation-message=" "
-              :disabled="sectorOptions.length < 2"
-            >
-              <option
-                :value="sector"
-                v-for="sector in sectorOptions"
-                :key="sector.id"
-              >{{sector.name}}</option>
-            </b-select>
-          </b-field>
-
-          <b-field label="Groupe de priere:" v-if="showGroup">
-            <b-select
-              placeholder="select Gr.Priere..."
-              class="br-1"
-              v-model="group"
-              validation-message=" "
-              :disabled="groupOptions.length < 2"
-            >
-              <option :value="group" v-for="group in groupOptions" :key="group.id">{{group.name}}</option>
-            </b-select>
-          </b-field>
-        </div>
+        <select-grids
+          v-if="!isPublic"
+          @setcountry="SetCountry"
+          @setprovince="SetProvince"
+          @setsector="SetSector"
+          @setgroup="SetGroup"
+        />
 
         <div class="control ema-btn">
           <button class="button is-primary" type="submit">Edit</button>
@@ -150,18 +96,6 @@ export default {
     location() {
       return this.$store.getters.location;
     },
-    countryOptions() {
-      return [this.default, this.$countryOptions()].flat();
-    },
-    provinceOptions() {
-      return [this.default, this.$provinceOptions(this.country)].flat();
-    },
-    sectorOptions() {
-      return [this.default, this.$sectorOptions(this.province)].flat();
-    },
-    groupOptions() {
-      return [this.default, this.$groupOptions(this.sector)].flat();
-    },
     ActiveLocation() {
       return this.$store.getters.ActiveLocation;
     },
@@ -182,23 +116,6 @@ export default {
     showGroup() {
       if (this.ActiveLocation.group) this.group = this.ActiveLocation.group;
       return this.ActiveLocation.group ? false : true;
-    },
-  },
-  watch: {
-    country() {
-      handler: {
-        this.$set(this, "province", this.default);
-      }
-    },
-    province() {
-      handler: {
-        this.$set(this, "sector", this.default);
-      }
-    },
-    sector() {
-      handler: {
-        this.$set(this, "group", this.default);
-      }
     },
   },
   beforeMount() {
@@ -242,20 +159,16 @@ export default {
       const CancelToken = this.$CancelToken();
       let CANCEL_TOKEN;
       let reqData = {
-        title: this.title,
-        body: this.message,
-        video_url: this.VideoURL,
-        public: this.isPublic,
-        country_id: this.showCountry
-          ? this.ActiveLocation.country.id
-          : this.country.id,
+         country_id: this.showCountry
+          ? this.country.id
+          : this.ActiveLocation.country.id,
         province_id: this.showProvince
-          ? this.ActiveLocation.province.id
-          : this.province.id,
+          ? this.province.id
+          : this.ActiveLocation.province.id,
         sector_id: this.showSector
-          ? this.ActiveLocation.sector.id
-          : this.sector.id,
-        group_id: this.showGroup ? this.ActiveLocation.group.id : this.group.id,
+          ? this.sector.id
+          : this.ActiveLocation.sector.id,
+        group_id: this.showGroup ? this.group.id : this.ActiveLocation.group.id,
       };
       Object.keys(reqData).map(
         (key) => reqData[key] == null && delete reqData[key]
@@ -283,6 +196,18 @@ export default {
     CancelRequestFunction() {
       if (typeof this.CancelRequest == "function") this.CancelRequest();
       this.state.loading = false;
+    },
+    SetCountry(country) {
+      this.$set(this, "country", country);
+    },
+    SetProvince(province) {
+      this.$set(this, "province", province);
+    },
+    SetSector(sector) {
+      this.$set(this, "sector", sector);
+    },
+    SetGroup(group) {
+      this.$set(this, "group", group);
     },
   },
 };

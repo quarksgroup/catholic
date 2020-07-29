@@ -90,7 +90,7 @@ export default {
       else return false;
     },
     showUpdateForm() {
-      return this.objectToUpdate ? true : false;
+      return this.objectToUpdate != null ? true : false;
     },
     shownStudies() {
       return this.studies.filter((study) =>
@@ -151,8 +151,9 @@ export default {
           this.$set(this.studies, key, updatedItem)
       );
     },
-    editStudy(itemToEdit) {
-      this.objectToUpdate = itemToEdit;
+    async editStudy(itemToEdit) {
+      if (this.showUpdateForm) await this.$set(this, "objectToUpdate", null);
+      this.$set(this, "objectToUpdate", itemToEdit);
     },
     changedPage(page) {
       this.fetchData(page);

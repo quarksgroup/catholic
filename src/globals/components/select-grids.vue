@@ -74,6 +74,9 @@ export default {
     location() {
       return this.$store.getters.location;
     },
+    ActiveLocation() {
+      return this.$store.getters.ActiveLocation;
+    },
     countryOptions() {
       return [this.default, this.$countryOptions()].flat();
     },
@@ -86,47 +89,103 @@ export default {
     groupOptions() {
       return [this.default, this.$groupOptions(this.sector)].flat();
     },
-    ActiveLocation() {
-      return this.$store.getters.ActiveLocation;
-    },
     showCountry() {
-      if (this.ActiveLocation.country)
-        this.country = this.ActiveLocation.country;
       return this.ActiveLocation.country ? false : true;
     },
     showProvince() {
-      if (this.ActiveLocation.province)
-        this.province = this.ActiveLocation.province;
       return this.ActiveLocation.province ? false : true;
     },
     showSector() {
-      if (this.ActiveLocation.sector) this.sector = this.ActiveLocation.sector;
       return this.ActiveLocation.sector ? false : true;
     },
     showGroup() {
-      if (this.ActiveLocation.group) this.group = this.ActiveLocation.group;
       return this.ActiveLocation.group ? false : true;
     },
   },
   watch: {
     country() {
       handler: {
+        this.initialize();
         this.$set(this, "province", this.default);
+        this.$emit("setcountry", this.country);
+        console.log(this.country);
       }
     },
     province() {
       handler: {
+        this.initialize();
+        this.$emit("setprovince", this.province);
         this.$set(this, "sector", this.default);
       }
     },
     sector() {
       handler: {
+        this.initialize();
+        this.$emit("setsector", this.sector);
         this.$set(this, "group", this.default);
       }
+    },
+    group() {
+      handler: {
+        this.initialize();
+        this.$emit("setgroup", this.group);
+      }
+    },
+  },
+  created() {
+    this.$parent.$on("clear-select", this.clear);
+  },
+  beforeMount() {
+    this.initialize();
+  },
+  methods: {
+    initialize() {
+      if (this.ActiveLocation.country)
+        this.$set(this, "country", this.ActiveLocation.country);
+      if (this.ActiveLocation.province)
+        this.$set(this, "province", this.ActiveLocation.province);
+      if (this.ActiveLocation.sector)
+        this.$set(this, "sector", this.ActiveLocation.sector);
+      if (this.ActiveLocation.group)
+        this.$set(this, "group", this.ActiveLocation.group);
+    },
+    clear() {
+      if (this.showCountry == false) this.$set(this, "country", this.default);
+      if (this.showProvince == false) this.$set(this, "province", this.default);
+      if (this.showSector == false) this.$set(this, "sector", this.default);
+      if (this.showGroup == false) this.$set(this, "group", this.default);
     },
   },
 };
 </script>
 
-<style>
+<style lang="scss">
+.select-grids {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-column-gap: 1rem;
+  grid-row-gap: 1rem;
+  align-items: start;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  width: 100%;
+
+  .field {
+    margin-bottom: 0;
+    .select {
+      &::after {
+        border-color: #868484 !important;
+      }
+    }
+    select {
+      width: 100%;
+      &:disabled {
+        border-color: #dbdbdb;
+      }
+    }
+  }
+  .select {
+    width: 100%;
+  }
+}
 </style>

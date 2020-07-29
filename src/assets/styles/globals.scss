@@ -1,59 +1,4 @@
-@import "~bulma/sass/utilities/_all";
-$primary: blueviolet;
-$primary-invert: findColorInvert($primary);
-$radius: 2px;
-$radius-large: 5px;
-$colors: (
-  "primary": (
-    $primary,
-    $primary-invert,
-  ),
-  "white": (
-    $white,
-    $black,
-  ),
-  "black": (
-    $black,
-    $white,
-  ),
-  "light": (
-    $light,
-    $light-invert,
-  ),
-  "dark": (
-    $dark,
-    $dark-invert,
-  ),
-  "info": (
-    $info,
-    $info-invert,
-  ),
-  "success": (
-    $success,
-    $success-invert,
-  ),
-  "warning": (
-    $warning,
-    $warning-invert,
-  ),
-  "danger": (
-    $danger,
-    $danger-invert,
-  ),
-);
-
-// Links
-$link: $primary;
-$link-invert: $primary-invert;
-$link-focus-border: $primary;
-
-@import "~bulma";
-@import "~buefy/src/scss/buefy";
-
-* {
-  -webkit-font-smoothing: antialiased !important;
-  -moz-osx-font-smoothing: grayscale !important;
-}
+@import "./resets";
 body,
 html {
   padding: 0;
@@ -78,7 +23,7 @@ button {
   min-width: 100%;
   background-color: #f8f8ff;
   overflow: auto;
-  max-width: 1024px;
+  max-width: 1200px;
   color: #2c3e50;
 
   .no-select {
@@ -352,23 +297,6 @@ button {
   }
   100% {
     -o-transform: rotate(360deg);
-  }
-}
-
-.select-grids {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  grid-column-gap: 1rem;
-  grid-row-gap: 1rem;
-  align-items: start;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-
-  .field {
-    margin-bottom: 0;
-  }
-  .select {
-    width: 100%;
   }
 }
 .ema-loading-component {
