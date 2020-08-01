@@ -160,7 +160,11 @@ export default {
       const CancelToken = this.$CancelToken();
       let CANCEL_TOKEN;
       let reqData = {
-         country_id: this.showCountry
+        title: this.title,
+        body: this.message,
+        video_url: this.VideoURL,
+        public: this.isPublic,
+        country_id: this.showCountry
           ? this.country.id
           : this.ActiveLocation.country.id,
         province_id: this.showProvince

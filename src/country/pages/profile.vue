@@ -18,10 +18,10 @@
           <b-input validation-message=" " placeholder="N/A" v-model="phone" required />
         </b-field>
         <b-field label="User Role">
-          <b-input placeholder="N/A" validation-message=" " disabled v-model="userRole" />
+          <b-input :placeholder="userRole || 'N/A'" validation-message=" " disabled />
         </b-field>
         <b-field label="User Belongs to">
-          <b-input placeholder="N/A" validation-message=" " disabled v-model="userBelongsTo" />
+          <b-input :placeholder="userBelongsTo.name || 'N/A'" validation-message=" " disabled />
         </b-field>
         <button class="button is-primary" type="submit" v-if="state.showUpdatebtn">Update Profile</button>
         <div class="loading" v-if="state.loading">
@@ -40,20 +40,20 @@ export default {
     return {
       state: {
         loading: false,
-        showUpdatebtn: true
+        showUpdatebtn: true,
       },
       name: null,
       username: null,
       email: null,
       phone: null,
       userRole: null,
-      userBelongsTo: null
+      userBelongsTo: null,
     };
   },
   computed: {
     user() {
       return this.$store.getters.userDetails;
-    }
+    },
   },
   watch: {
     name() {
@@ -87,10 +87,11 @@ export default {
           this.userBelongsTo = this.user.belongs_to;
         }
       }
-    }
+    },
   },
   beforeMount() {
     this.setInformation();
+    console.log(this.user);
   },
   mounted() {},
   methods: {
@@ -100,21 +101,21 @@ export default {
         name: this.name,
         username: this.username,
         phone: this.phone,
-        email: this.email
+        email: this.email,
       };
       Object.keys(reqData).map(
-        key => reqData[key] == null && delete reqData[key]
+        (key) => reqData[key] == null && delete reqData[key]
       );
       this.axios
         .post("profile", reqData)
-        .then(res => {
+        .then((res) => {
           this.state.loading = false;
           if (res.data.message) this.toast.success(res.data.message);
           if (res.status == 200) {
             this.$store.dispatch("SETUSER", res.data.data);
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.state.loading = false;
           if (err.errorMessage) this.$toast.error(err.errorMessage);
         });
@@ -135,8 +136,8 @@ export default {
         this.userRole = this.user.role.description;
         this.userBelongsTo = this.user.belongs_to;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -198,7 +199,10 @@ export default {
             background-color: whitesmoke;
             border-color: whitesmoke;
             box-shadow: none;
-            color: #7a7a7a;
+            
+            &::placeholder {
+              color: #5d656f;
+            }
           }
         }
       }

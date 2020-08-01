@@ -22,20 +22,29 @@
     </div>
 
     <b-dropdown aria-role="list" class="__nav-dropdown" position="is-bottom-left">
+      <div class="user-profile" slot="trigger">
+        <img :src="user_logo" />
+      </div>
       <b-dropdown-item custom aria-role="menuitem" class="custom" v-if="user && user.name">
         Logged in as
         <b>{{user.name}}</b>
       </b-dropdown-item>
       <hr class="dropdown-divider" aria-role="menuitem" />
-      <div class="user-profile" slot="trigger">
-        <img :src="user_logo" />
-      </div>
-      <b-dropdown-item aria-role="listitem" @click="goToProfile">
-        <b-icon pack="fa" icon="user-alt"></b-icon>Profile
+      <b-dropdown-item aria-role="listitem">
+        <router-link tag="li" exact-active-class="active-link" to="/profile">
+          <b-icon pack="fa" icon="user-alt"></b-icon>Profile
+        </router-link>
+      </b-dropdown-item>
+      <b-dropdown-item aria-role="menuitem">
+        <router-link tag="li" exact-active-class="active-link" to="/testimonials-requests">
+          <b-icon pack="fa" icon="random"></b-icon>Testimonials Requests
+        </router-link>
       </b-dropdown-item>
       <hr class="dropdown-divider" aria-role="menuitem" />
       <b-dropdown-item aria-role="menuitem" @click="$router.push('/logout')">
-        <b-icon pack="fa" icon="sign-out-alt"></b-icon>Logout
+        <router-link tag="li" exact-active-class="active-link" to="/logout">
+          <b-icon pack="fa" icon="sign-out-alt"></b-icon>Logout
+        </router-link>
       </b-dropdown-item>
     </b-dropdown>
     <div class="menu">
@@ -52,20 +61,20 @@ export default {
   data() {
     return {
       user_logo: userProfile,
-      menu_logo: menu
+      menu_logo: menu,
     };
   },
   computed: {
     user() {
       return this.$store.getters.userDetails;
-    }
+    },
   },
   methods: {
     goToProfile() {
       if (this.$route.name != "Profile Page")
         this.$router.push("/country/profile");
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -153,23 +162,29 @@ export default {
         padding-bottom: 0;
 
         .dropdown-item {
-          font-size: 0.95rem;
-          padding-top: 0.75rem;
-          padding-bottom: 0.75rem;
-          transition: all 0.25s ease;
+          padding: 0;
+          li {
+            font-size: 0.95rem;
+            transition: all 0.25s ease;
+            padding: 0.75rem 1rem;
+            margin: 0.15rem 0;
 
-          i {
-            margin-right: 0.25rem;
-            font-size: 1rem;
+            i {
+              margin-right: 0.25rem;
+              font-size: 1rem;
+            }
+
+            &:hover,
+            &.active-link {
+              background-color: blueviolet;
+              color: white;
+            }
           }
 
-          &:not(.custom) {
-            display: flex;
-            align-items: center;
-          }
-          &:hover:not(.custom) {
-            background-color: blueviolet;
-            color: white;
+          &.custom {
+            font-size: 0.95rem;
+            transition: all 0.25s ease;
+            padding: 0.75rem 1rem;
           }
         }
         hr {

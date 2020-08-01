@@ -54,13 +54,13 @@ export default {
   data() {
     return {
       state: {
-        loading: false
+        loading: false,
       },
       img: {
-        logo: logo
+        logo: logo,
       },
       username: "",
-      password: ""
+      password: "",
     };
   },
   mounted() {
@@ -73,19 +73,19 @@ export default {
       const reqData = { username: this.username, password: this.password };
       this.axios
         .post("login", reqData)
-        .then(res => {
+        .then((res) => {
           sessionStorage.setItem("token", res.data.token);
           this.$store.dispatch("SETUSER", res.data.user);
           this.$store.dispatch("STARTUP");
           this.$router.push("/country");
           this.state.loading = false;
         })
-        .catch(err => {
+        .catch((err) => {
           this.state.loading = false;
           if (err) this.$toast.error(err.errorMessage);
         });
-    }
-  }
+    },
+  },
 };
 </script>
 
