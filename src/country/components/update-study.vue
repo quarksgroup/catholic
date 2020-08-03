@@ -1,55 +1,55 @@
 <template>
-  <div class="add-account">
+  <div class="edit-study">
     <header class="ema-add-header">
-      <h5>Add an account</h5>
+      <h5>Edit Inyigisho</h5>
+      <span class="close" @click="$emit('close')">&times;</span>
     </header>
-    <form @submit.prevent="addAccount">
+    <form @submit.prevent="editStudy">
       <div>
-        <b-field label="Names:">
+        <b-field label="Inyigisho Title:">
           <b-input
             type="text"
-            placeholder="Enter names..."
+            placeholder=" "
             validation-message=" "
             class="br-1 no-shadow"
             required
-            v-model="name"
+            v-model="title"
           />
         </b-field>
 
-        <b-field label="username:">
+        <div class="control">
+          <b-field label="Inyigisho Description:">
+            <b-input
+              name="inyigisho_description"
+              id="inyigisho-description"
+              placeholder="Write inyigisho description here..."
+              required
+              type="textarea"
+              class="br-1 no-shadow"
+              v-model="message"
+              validation-message=" "
+            />
+          </b-field>
+        </div>
+
+        <b-field label="Inyigisho Video URL:">
           <b-input
-            type="text"
-            placeholder="Enter username..."
+            type="url"
+            placeholder=" "
             validation-message=" "
             class="br-1 no-shadow"
             required
-            v-model="username"
+            v-model="VideoURL"
           />
         </b-field>
 
-        <b-field label="Phone number:">
-          <b-input
-            type="number"
-            placeholder="Enter phone number..."
-            class="br-1 no-shadow"
-            validation-message=" "
-            required
-            v-model="phone"
-          />
-        </b-field>
-
-        <b-field label="Email:">
-          <b-input
-            type="text"
-            placeholder="Enter email..."
-            validation-message=" "
-            class="br-1 no-shadow"
-            required
-            v-model="email"
-          />
+        <b-field class="control ema-add-radios">
+          <b-radio v-model="isPublic" :native-value="true">Public</b-radio>
+          <b-radio v-model="isPublic" :native-value="false">Private</b-radio>
         </b-field>
 
         <select-grids
+          v-if="!isPublic"
           @setcountry="SetCountry"
           @setprovince="SetProvince"
           @setsector="SetSector"
@@ -57,13 +57,13 @@
         />
 
         <div class="control ema-btn">
-          <button class="button is-primary" type="submit">create account</button>
+          <button class="button is-primary" type="submit">Edit</button>
         </div>
       </div>
       <div class="loading control" v-if="state.loading">
         <span @click="CancelRequestFunction()">&times;</span>
         <div class="loading-light"></div>
-        <p>creating Account</p>
+        <p>Editing inyigisho...</p>
       </div>
     </form>
   </div>
@@ -71,16 +71,19 @@
 
 <script>
 export default {
-  name: "add-account-component",
+  name: "edit-study-component",
+  props: {
+    study: Object,
+  },
   data() {
     return {
       state: {
-        loading: false,
+        loading: true,
       },
-      name: "",
-      username: "",
-      phone: "",
-      email: "",
+      title: "",
+      message: "",
+      VideoURL: "",
+      isPublic: false,
       country: { name: "all", id: null },
       province: { name: "all", id: null },
       sector: { name: "all", id: null },
@@ -115,24 +118,51 @@ export default {
       return this.ActiveLocation.group ? false : true;
     },
   },
+  beforeMount() {
+    this.title = this.study.title;
+    this.message = this.study.body;
+    this.isPublic = this.study.public;
+    this.VideoURL = this.study.VideoURL;
+    this.country = this.study.country
+      ? {
+          name: this.study.country.name,
+          id: this.study.country.id,
+        }
+      : this.default;
+    this.province = this.study.province
+      ? {
+          name: this.study.province.name,
+          id: this.study.province.id,
+        }
+      : this.default;
+    this.sector = this.study.sector
+      ? {
+          name: this.study.sector.name,
+          id: this.study.sector.id,
+        }
+      : this.default;
+    this.group = this.study["groupe_de_priere"]
+      ? {
+          name: this.study["groupe_de_priere"].name,
+          id: this.study["groupe_de_priere"].id,
+        }
+      : this.default;
+    this.state.loading = false;
+  },
   beforeDestroy() {
     this.CancelRequestFunction();
+    this.$emit("close");
   },
   methods: {
-    addAccount() {
-      // console.log(this.country);
-      // console.log(this.province);
-      // console.log(this.sector);
-      // console.log(this.group);
-      // return;
+    editStudy() {
       this.state.loading = true;
       const CancelToken = this.$CancelToken();
       let CANCEL_TOKEN;
       let reqData = {
-        name: this.name,
-        username: this.username,
-        phone: this.phone,
-        email: this.email,
+        title: this.title,
+        body: this.message,
+        video_url: this.VideoURL,
+        public: this.isPublic,
         country_id: this.country,
         province_id: this.province,
         sector_id: this.sector,
@@ -142,16 +172,17 @@ export default {
         (key) => reqData[key] == null && delete reqData[key]
       );
       this.axios
-        .post("user", reqData, {
+        .put(`inyigisho/${this.study.id}`, reqData, {
           cancelToken: new CancelToken(function executor(token) {
             CANCEL_TOKEN = token;
           }),
         })
         .then((res) => {
+          console.log(res);
           this.state.loading = false;
           if (res.data.message) this.$toast.success(res.data.message);
-          if (res.status == 201) this.$emit("created");
-          this.clear();
+          if (res.status == 200) this.$emit("updated", res.data.data);
+          this.$emit("close");
         })
         .catch((err) => {
           this.state.loading = false;
@@ -176,20 +207,12 @@ export default {
     SetGroup(group) {
       this.$set(this, "group", group);
     },
-    clear() {
-      this.name = "";
-      this.username = "";
-      this.phone = "";
-      this.email = ''
-      this.CancelRequest = null;
-      this.$emit("clear-selects");
-    },
   },
 };
 </script>
 
 <style lang="scss">
-.add-account {
+.edit-study {
   background: white;
   box-shadow: 0 2px 5px 0 rgba(32, 33, 36, 0.25);
   border-radius: 7px;
@@ -206,7 +229,6 @@ export default {
     min-height: calc(100% - 40px);
     overflow-y: auto;
     position: relative;
-
     .loading {
       position: absolute;
       top: 0;
@@ -217,7 +239,7 @@ export default {
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background-color: rgba(0, 0, 0, 0.75);
+      background-color: rgba(0, 0, 0, 0.5);
       animation: opacity-animation 0.2s;
       div {
         width: 2rem;
@@ -252,6 +274,11 @@ export default {
         margin-bottom: 0.25em;
       }
     }
+    textarea {
+      font-family: inherit;
+      font-size: 0.85rem;
+      color: inherit;
+    }
 
     input::placeholder,
     .select.is-empty select {
@@ -263,7 +290,7 @@ export default {
     }
   }
 }
-.add-account,
+.edit-study,
 form {
   &::-webkit-scrollbar {
     width: 10px;

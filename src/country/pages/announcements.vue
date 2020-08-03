@@ -1,120 +1,170 @@
 <template>
-  <div class="announcements-dashboard">
-    <header>
-      <h5>Announcements in country</h5>
-
-      <b-button class="is-primary no-b-radius" @click="$modal.show('add-announcement')">
-        <i class="fa fa-plus" /> Add announcement
-      </b-button>
-    </header>
+  <div class="announcements-dashboard ema-container">
     <div class="announcements-body">
-      <div class="announcement" v-for="i in 5" :key="i">
-        <div class="img no-select">
-          <img src="../../assets/img/notify.svg" alt="notify_image" />
-        </div>
-        <div class="description">
-          <header>
-            <h5>Ubutumire kubanyamuryango ba croix rouge bose</h5>
-            <hr class="hr" />
-          </header>
-          <p>Lorem ipsum dolor sit amet consectetur</p>
-          <b-button class="is-small is-primary">options</b-button>
-        </div>
+      <header class="ema-header">
+        <h5 class="title">All Announcements</h5>
+        <b-field>
+          <b-input
+            :disabled="announcements.length < 1"
+            placeholder="Search title..."
+            type="search"
+            icon-pack="fa"
+            icon="search"
+            v-model="searchedTitle"
+          />
+        </b-field>
+        <button class="button is-primary br-1" @click="fetchData" :disabled="state.loading">Refresh</button>
+      </header>
+      <div class="page-loading" v-if="state.loading">
+        <div class="loading-component loading-dark" />
+        <p>Loading Announcements...</p>
       </div>
+      <div class="ema-1c-grids" v-else-if="showAnnouncements">
+        <announcement
+          v-for="announcement in shownAnnouncements"
+          :key="announcement.id"
+          :announcement="announcement"
+          @deleted="announcementDeleted"
+          @edit="editAnnouncement"
+        />
+      </div>
+      <div class="page-error" v-else-if="searchedTitle">
+        <article>
+          There are no announcements with the title
+          <b class="has-text-weight-bold">{{searchedTitle}}</b>
+        </article>
+      </div>
+      <div class="page-error" v-else-if="!state.loading">
+        <p>There are no announcements available, For now!</p>
+      </div>
+
+      <!-- pagination -->
+
+      <b-pagination
+        :total="pagination.total || 0"
+        :range-before="1"
+        :range-after="1"
+        :per-page="pagination.per_page || 0"
+        :current.sync="currentPage"
+        aria-next-label="Next page"
+        aria-previous-label="Previous page"
+        aria-page-label="Page"
+        aria-current-label="Current page"
+        v-if="showPagination"
+        class="my-3"
+        @change="changedPage"
+      ></b-pagination>
     </div>
+    <update-announcement
+      v-if="showUpdateForm"
+      :announcement="objectToUpdate"
+      @updated="announcementUpdated"
+      @close="objectToUpdate=null"
+    />
+    <add-announcement v-else @created="announcementCreated" />
   </div>
 </template>
 
 <script>
+import announcement from "../components/announcement.vue";
+import addAnnouncement from "../components/add-announcement";
+import updateAnnouncement from "../components/update-announcement";
 export default {
-  components: {
-    "add-announcement": () => import("../components/add-announcement")
+  components: { addAnnouncement, announcement, updateAnnouncement },
+  data() {
+    return {
+      state: { loading: true, error: "" },
+      announcements: [],
+      CancelAxios: null,
+      objectToUpdate: null,
+      searchedTitle: "",
+      pagination: {},
+      currentPage: 1,
+    };
+  },
+  computed: {
+    user() {
+      return this.$store.getters.userDetails;
+    },
+    showAnnouncements() {
+      if (this.shownAnnouncements.length > 0) return true;
+      else return false;
+    },
+    showUpdateForm() {
+      return this.objectToUpdate != null ? true : false;
+    },
+    shownAnnouncements() {
+      return this.announcements.filter((announcement) =>
+        announcement.title
+          .toLowerCase()
+          .includes(this.searchedTitle.toLowerCase())
+      );
+    },
+    showPagination() {
+      if (
+        !this.state.loading &&
+        this.pagination &&
+        this.pagination.total &&
+        this.pagination.per_page &&
+        this.pagination.total > this.pagination.per_page
+      )
+        return true;
+      return false;
+    },
+  },
+  beforeMount() {
+    this.fetchData(this.currentPage);
   },
   destroyed() {
-    // console.log("destroyed");
+    if (typeof this.CancelAxios == "function") this.CancelAxios();
   },
   methods: {
-    waiting() {
-      setTimeout(() => {
-        console.log("hello");
-        return true;
-      }, 5000);
-    }
-  }
+    fetchData(page) {
+      const CancelToken = this.$CancelToken();
+      let CANCEL_TOKEN;
+      this.state.loading = true;
+      this.axios
+        .get(`announcement?page=${page ? page : 1}`, {
+          cancelToken: new CancelToken(function executor(token) {
+            CANCEL_TOKEN = token;
+          }),
+        })
+        .then((res) => {
+          this.$set(this, "announcements", res.data.data);
+          this.$set(this, "pagination", res.data.meta);
+          this.state.loading = false;
+        })
+        .catch((err) => {
+          this.state.loading = false;
+          if (err.errorMessage) this.$toast.error(err.errorMessage || "");
+        });
+      this.CancelAxios = CANCEL_TOKEN;
+    },
+    announcementDeleted(deletedItem) {
+      if (this.announcements.indexOf(deletedItem) !== -1)
+        this.announcements.splice(this.announcements.indexOf(deletedItem), 1);
+    },
+    announcementCreated(createdItem) {
+      this.announcements = [createdItem].concat(this.announcements);
+    },
+    announcementUpdated(updatedItem) {
+      Object.keys(this.announcements).map(
+        (key) =>
+          this.announcements[key].id == updatedItem.id &&
+          this.$set(this.announcements, key, updatedItem)
+      );
+    },
+    async editAnnouncement(itemToEdit) {
+      if (this.showUpdateForm) await this.$set(this, "objectToUpdate", null);
+      this.$set(this, "objectToUpdate", itemToEdit);
+    },
+    clear() {
+      this.state.loading = false;
+      this.state.error = "";
+    },
+    changedPage(page) {
+      this.fetchData(page);
+    },
+  },
 };
 </script>
-
-<style lang="scss">
-.announcements-dashboard {
-  & > header {
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 2px solid #999;
-    margin-bottom: 5px;
-    align-items: center;
-    padding: 0.25rem;
-    h5 {
-      font-size: 19px;
-      font-weight: bold;
-    }
-    button {
-      margin-left: 1rem;
-    }
-  }
-  .announcements-body {
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-
-    .announcement {
-      background: white;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px 0 rgba(32, 33, 36, 0.2);
-      margin: 0.75rem;
-      height: fit-content;
-      min-width: 200px;
-      max-width: 350px;
-      flex: 1;
-
-      .description {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 0.7rem;
-        header {
-          h5 {
-            font-size: 17px;
-            line-height: 115%;
-            font-weight: bold;
-            text-transform: capitalize;
-            text-align: left;
-          }
-          hr {
-            margin: 0.2rem 0 0.3rem;
-            background: #d6d6d6;
-          }
-        }
-        p {
-          margin: 0 0 0.5rem;
-          font-size: 16px;
-          color: #636363;
-          line-height: 120%;
-        }
-        button {
-          align-self: flex-end;
-        }
-      }
-      .img {
-        height: 120px;
-        background: #23063e;
-        display: flex;
-        img {
-          height: 100%;
-          width: 50px;
-          margin: auto;
-        }
-      }
-    }
-  }
-}
-</style>

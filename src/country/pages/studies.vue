@@ -1,100 +1,163 @@
 <template>
-  <div class="studies-dashboard">
-    <header>
-      <h5>Inyigisho zose</h5>
-      <b-button class="is-primary no-b-radius" @click="$modal.show('add-study')">
-        <i class="fa fa-plus" /> Add inyigisho
-      </b-button>
-    </header>
+  <div class="studies-dashboard ema-container">
     <div class="studies">
-      <div class="study" v-for="i in 11" :key="i">
-        <div class="video">
-          <i class="fa fa-play-circle" />
-        </div>
-        <div class="description">
-          <div class="study-title">
-            <h5>Inyigisho ya {{i}}</h5>
-          </div>
-          <div class="study-subtitle">
-            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ex, nobis.</p>
-          </div>
-          <b-button class="is-small is-primary">Read more...</b-button>
-        </div>
+      <header class="ema-header">
+        <h5>Inyigisho zose</h5>
+        <b-field>
+          <b-input
+            :disabled="studies.length < 1"
+            placeholder="Search title..."
+            type="search"
+            icon-pack="fa"
+            icon="search"
+            v-model="searchedTitle"
+          />
+        </b-field>
+        <button class="button is-primary br-1" @click="fetchData">Refresh</button>
+      </header>
+      <div class="page-loading" v-if="state.loading">
+        <div class="loading-component loading-dark" />
+        <p>Loading studies...</p>
       </div>
+      <div class="ema-grids" v-else-if="showStudies">
+        <video-card
+          v-for="study in shownStudies"
+          :key="study.id"
+          :video="study"
+          from="inyigisho"
+          @deleted="studyDeleted"
+          @edit="editStudy"
+        />
+      </div>
+      <div class="page-error" v-else-if="searchedTitle">
+        <article>
+          There are no Studies with the title
+          <b class="has-text-weight-bold">{{searchedTitle}}</b>
+        </article>
+      </div>
+      <div class="page-error" v-else-if="!state.loading">
+        <p>There are no Studies available, For now!</p>
+      </div>
+
+      <!-- pagination -->
+
+      <b-pagination
+        :total="pagination.total || 0"
+        :range-before="1"
+        :range-after="1"
+        :per-page="pagination.per_page || 0"
+        :current.sync="currentPage"
+        aria-next-label="Next page"
+        aria-previous-label="Previous page"
+        aria-page-label="Page"
+        aria-current-label="Current page"
+        v-if="showPagination"
+        class="my-3"
+        @change="changedPage"
+      ></b-pagination>
     </div>
+    <update-study
+      v-if="showUpdateForm"
+      :study="objectToUpdate"
+      @updated="studyUpdated"
+      @close="objectToUpdate=null"
+    />
+    <add-study v-else @created="studyCreated" />
   </div>
 </template>
 
 <script>
-export default {};
+import videoCard from "../components/Video-card";
+import addStudy from "../components/add-study.vue";
+import updateStudy from "../components/update-study.vue";
+export default {
+  name: "study-component",
+  components: { videoCard, addStudy, updateStudy },
+  data() {
+    return {
+      state: { loading: true, is_refreshing: false },
+      studies: [],
+      CancelAxios: null,
+      objectToUpdate: null,
+      searchedTitle: "",
+      pagination: {},
+      currentPage: 1,
+    };
+  },
+  computed: {
+    showStudies() {
+      if (this.shownStudies.length > 0) return true;
+      else return false;
+    },
+    showUpdateForm() {
+      return this.objectToUpdate != null ? true : false;
+    },
+    shownStudies() {
+      return this.studies.filter((study) =>
+        study.title.toLowerCase().includes(this.searchedTitle.toLowerCase())
+      );
+    },
+    showPagination() {
+      if (
+        !this.state.loading &&
+        this.pagination &&
+        this.pagination.total &&
+        this.pagination.per_page &&
+        this.pagination.total > this.pagination.per_page
+      )
+        return true;
+      return false;
+    },
+  },
+  beforeMount() {
+    this.fetchData(this.currentPage);
+  },
+  destroyed() {
+    if (typeof this.CancelAxios == "function") this.CancelAxios();
+  },
+  methods: {
+    fetchData(page) {
+      const CancelToken = this.$CancelToken();
+      let CANCEL_TOKEN;
+      this.state.loading = true;
+      this.axios
+        .get(`inyigisho?page=${page ? page : 1}`, {
+          cancelToken: new CancelToken(function executor(token) {
+            CANCEL_TOKEN = token;
+          }),
+        })
+        .then((res) => {
+          this.$set(this, "studies", res.data.data);
+          this.$set(this, "pagination", res.data.meta);
+          this.state.loading = false;
+        })
+        .catch((err) => {
+          this.state.loading = false;
+          if (err.errorMessage) this.$toast.error(err.errorMessage || "");
+        });
+      this.CancelAxios = CANCEL_TOKEN;
+    },
+    studyCreated(createdItem) {
+      this.studies = [createdItem].concat(this.studies);
+    },
+    studyDeleted(deletedItem) {
+      if (this.studies.indexOf(deletedItem) !== -1)
+        this.studies.splice(this.studies.indexOf(deletedItem), 1);
+    },
+    studyUpdated(updatedItem) {
+      Object.keys(this.studies).map(
+        (key) =>
+          this.studies[key].id == updatedItem.id &&
+          this.$set(this.studies, key, updatedItem)
+      );
+    },
+    async editStudy(itemToEdit) {
+      if (this.showUpdateForm) await this.$set(this, "objectToUpdate", null);
+      this.$set(this, "objectToUpdate", itemToEdit);
+    },
+    changedPage(page) {
+      this.fetchData(page);
+    },
+  },
+};
 </script>
-
-<style lang="scss">
-.studies-dashboard {
-  & > header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    border-bottom: 2px solid #999;
-    padding: 0.5rem 0;
-    h5 {
-      font-size: 18px;
-      text-transform: capitalize;
-      font-weight: bold;
-    }
-  }
-  & > .studies {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0.5rem 0;
-    justify-content: space-between;
-    .study {
-      background: white;
-      box-shadow: 0 2px 5px 0 rgba(32, 33, 36, 0.23);
-      border-radius: 3px;
-      margin: 1.5rem 1rem;
-      flex: 1;
-      flex-basis: 250px;
-      min-width: 250px;
-      max-width: 350px;
-
-      .video {
-        min-height: 200px;
-        background: #23063e;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        i {
-          font-size: 400%;
-          color: white;
-        }
-      }
-      .description {
-        padding: 0.5rem;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-
-        .study-title {
-          h5 {
-            font-size: 18px;
-            font-weight: bold;
-            text-transform: capitalize;
-          }
-        }
-        .study-subtitle {
-          margin-bottom: 10px;
-          p {
-            color: #525252;
-            line-height: 120%;
-          }
-        }
-        button {
-          align-self: flex-end;
-        }
-      }
-    }
-  }
-}
-</style>
