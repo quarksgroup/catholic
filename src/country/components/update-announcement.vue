@@ -146,16 +146,10 @@ export default {
         title: this.title,
         body: this.message,
         public: this.isPublic,
-         country_id: this.showCountry
-          ? this.country.id
-          : this.ActiveLocation.country.id,
-        province_id: this.showProvince
-          ? this.province.id
-          : this.ActiveLocation.province.id,
-        sector_id: this.showSector
-          ? this.sector.id
-          : this.ActiveLocation.sector.id,
-        group_id: this.showGroup ? this.group.id : this.ActiveLocation.group.id,
+        country_id: this.country,
+        province_id: this.province,
+        sector_id: this.sector,
+        group_id: this.group,
       };
       Object.keys(reqData).map(
         (key) => reqData[key] == null && delete reqData[key]

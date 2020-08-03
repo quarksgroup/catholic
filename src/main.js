@@ -50,39 +50,29 @@ Vue.prototype.$countryOptions = () => {
   let location = store.getters.location;
   return location.countries || [];
 };
-Vue.prototype.$provinceOptions = (country) => {
+Vue.prototype.$provinceOptions = (countryID) => {
   let location = store.getters.location;
-  if (country && country.id)
+  if (countryID)
     return (
       location.provinces.filter(
-        (province) =>
-          province.country.name == country.name &&
-          province.country.id == country.id
+        (province) => province.country.id == countryID
       ) || []
     );
   else return [];
 };
-Vue.prototype.$sectorOptions = (province) => {
+Vue.prototype.$sectorOptions = (provinceID) => {
   let location = store.getters.location;
-  if (province && province.id)
+  if (provinceID)
     return (
-      location.sectors.filter(
-        (sector) =>
-          sector.province.name == province.name &&
-          sector.province.id == province.id
-      ) || []
+      location.sectors.filter((sector) => sector.province.id == provinceID) ||
+      []
     );
   else return [];
 };
-Vue.prototype.$groupOptions = (sector) => {
+Vue.prototype.$groupOptions = (sectorID) => {
   let location = store.getters.location;
-  if (sector && sector.id)
-    return (
-      location.groups.filter(
-        (group) =>
-          group.sector.name == sector.name && group.sector.id == sector.id
-      ) || []
-    );
+  if (sectorID)
+    return location.groups.filter((group) => group.sector.id == sectorID) || [];
   else return [];
 };
 

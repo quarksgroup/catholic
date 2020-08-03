@@ -21,7 +21,11 @@
           <b-input :placeholder="userRole || 'N/A'" validation-message=" " disabled />
         </b-field>
         <b-field label="User Belongs to">
-          <b-input :placeholder="userBelongsTo.name || 'N/A'" validation-message=" " disabled />
+          <b-input
+            :placeholder="belongs_to"
+            validation-message=" "
+            disabled
+          />
         </b-field>
         <button class="button is-primary" type="submit" v-if="state.showUpdatebtn">Update Profile</button>
         <div class="loading" v-if="state.loading">
@@ -53,6 +57,13 @@ export default {
   computed: {
     user() {
       return this.$store.getters.userDetails;
+    },
+    belongs_to() {
+      if (this.user) {
+        return this.user.belongs_to && this.user.role
+          ? this.user.belongs_to[this.user.role.slug].name
+          : "N/A";
+      } else return "N/A";
     },
   },
   watch: {
@@ -129,12 +140,12 @@ export default {
     },
     setInformation() {
       if (this.user) {
-        this.name = this.user.name;
-        this.username = this.user.username;
-        this.email = this.user.email;
-        this.phone = this.user.phone;
-        this.userRole = this.user.role.description;
-        this.userBelongsTo = this.user.belongs_to;
+        this.name = this.user.name || null;
+        this.username = this.user.username || null;
+        this.email = this.user.email || null;
+        this.phone = this.user.phone || null;
+        this.userRole = this.user.role.description || null;
+        this.userBelongsTo = this.user.belongs_to || null;
       }
     },
   },
@@ -199,7 +210,7 @@ export default {
             background-color: whitesmoke;
             border-color: whitesmoke;
             box-shadow: none;
-            
+
             &::placeholder {
               color: #5d656f;
             }

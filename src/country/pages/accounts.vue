@@ -8,11 +8,15 @@
           class="is-outlined"
           icon-pack="fas"
           icon="search"
-          :disabled="accounts.length < 1"
+          :disabled="disableSearchInput"
           placeholder="Search account name..."
           v-model="searchedName"
         />
-        <button class="button is-inverted is-outlined is-primary" @click="fetchAccounts">Refresh</button>
+        <button
+          class="button is-inverted is-outlined is-primary"
+          :disabled="disableRefreshBtn"
+          @click="fetchAccounts"
+        >Refresh</button>
       </header>
       <accounts-table
         :accounts="accounts"
@@ -40,7 +44,14 @@ export default {
       searchedName: "",
     };
   },
-  computed: {},
+  computed: {
+    disableSearchInput() {
+      return this.state.loading == true || this.accounts.length < 1;
+    },
+    disableRefreshBtn() {
+      return this.state.loading == true;
+    },
+  },
   beforeMount() {
     this.fetchAccounts(1);
   },

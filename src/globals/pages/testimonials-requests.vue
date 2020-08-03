@@ -1,7 +1,8 @@
 <template>
   <div id="testimonials-request-page">
-    <header v-if="!state.loading && show_requests">
+    <header>
       <h2>Testimonial Requests</h2>
+      <button class="button is-outlined is-primary" @click="fetchRequests">Refresh</button>
     </header>
     <div class="loading" v-if="state.loading">
       <i class="loading-dark" />

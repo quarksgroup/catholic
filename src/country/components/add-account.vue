@@ -120,6 +120,11 @@ export default {
   },
   methods: {
     addAccount() {
+      // console.log(this.country);
+      // console.log(this.province);
+      // console.log(this.sector);
+      // console.log(this.group);
+      // return;
       this.state.loading = true;
       const CancelToken = this.$CancelToken();
       let CANCEL_TOKEN;
@@ -128,16 +133,10 @@ export default {
         username: this.username,
         phone: this.phone,
         email: this.email,
-        country_id: this.showCountry
-          ? this.ActiveLocation.country.id
-          : this.country.id,
-        province_id: this.showProvince
-          ? this.ActiveLocation.province.id
-          : this.province.id,
-        sector_id: this.showSector
-          ? this.ActiveLocation.sector.id
-          : this.sector.id,
-        group_id: this.showGroup ? this.ActiveLocation.group.id : this.group.id,
+        country_id: this.country,
+        province_id: this.province,
+        sector_id: this.sector,
+        group_id: this.group,
       };
       Object.keys(reqData).map(
         (key) => reqData[key] == null && delete reqData[key]
@@ -181,6 +180,7 @@ export default {
       this.name = "";
       this.username = "";
       this.phone = "";
+      this.email = ''
       this.CancelRequest = null;
       this.$emit("clear-selects");
     },
