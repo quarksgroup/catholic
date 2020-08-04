@@ -2,29 +2,30 @@
   <div class="select-grids">
     <b-field label="Country:" v-if="showCountry">
       <b-select
-        placeholder="select country..."
-        class="br-1"
-        v-model="countryID"
-        validation-message=" "
-        :disabled="countryOptions.length < 2"
+              placeholder="select country..."
+              class="br-1"
+              v-model="countryID"
+              validation-message=" "
+              :disabled="countryOptions.length < 1"
       >
-        <option :value="null" selected="selected">All</option>
-        <option
-          :value="country.id"
-          v-for="country in countryOptions"
-          :key="country.id"
-        >{{country.name}}</option>
+          <!--        <option :value="null" selected="selected">All</option>-->
+          <option
+                  :value="country.id"
+                  v-for="country in countryOptions"
+                  :key="country.id"
+          >{{country.name}}
+          </option>
       </b-select>
     </b-field>
 
     <b-field label="Province:" v-if="showProvince">
       <b-select
-        placeholder="select province..."
-        class="br-1"
-        v-model="provinceID"
-        validation-message=" "
-        :disabled="provinceOptions.length < 2"
-        :required="!showCountry"
+              placeholder="select province..."
+              class="br-1"
+              v-model="provinceID"
+              validation-message=" "
+              :disabled="provinceOptions.length < 1"
+              :required="!showCountry"
       >
         <option :value="null" selected="selected">All</option>
         <option
@@ -37,26 +38,26 @@
 
     <b-field label="Sector:" v-if="showSector">
       <b-select
-        placeholder="select sector..."
-        class="br-1"
-        v-model="sectorID"
-        validation-message=" "
-        :disabled="sectorOptions.length < 2"
-        :required="!showProvince"
+              placeholder="select sector..."
+              class="br-1"
+              v-model="sectorID"
+              validation-message=" "
+              :disabled="sectorOptions.length < 1"
+              :required="!showProvince"
       >
         <option :value="null" selected="selected">All</option>
         <option :value="sector.id" v-for="sector in sectorOptions" :key="sector.id">{{sector.name}}</option>
       </b-select>
     </b-field>
 
-    <b-field label="Groupe de priere:" v-if="showGroup">
+    <b-field label="Groupe de priere:" v-if="showGroup && canSelectGroup">
       <b-select
-        placeholder="select Gr.Priere..."
-        class="br-1"
-        v-model="groupID"
-        validation-message=" "
-        :disabled="groupOptions.length < 2"
-        :required="!showSector"
+              placeholder="select Gr.Priere..."
+              class="br-1"
+              v-model="groupID"
+              validation-message=" "
+              :disabled="groupOptions.length < 1"
+              :required="!showSector"
       >
         <option :value="null" selected="selected">All</option>
         <option :value="group.id" v-for="group in groupOptions" :key="group.id">{{group.name}}</option>
@@ -70,23 +71,29 @@ export default {
   name: "select-grids-component",
   data() {
     return {
-      countryID: null,
-      provinceID: null,
-      sectorID: null,
-      groupID: null,
+        countryID: '1',
+        provinceID: null,
+        sectorID: null,
+        groupID: null,
     };
   },
   computed: {
-    location() {
-      return this.$store.getters.location;
-    },
-    ActiveLocation() {
-      return this.$store.getters.ActiveLocation;
-    },
-    countryOptions() {
-      return [this.$countryOptions()].flat();
-    },
-    provinceOptions() {
+      user() {
+          return this.$store.getters.userDetails;
+      },
+      canSelectGroup(){
+        return this.user.role.slug!="groupe"
+      },
+      location() {
+          return this.$store.getters.location;
+      },
+      ActiveLocation() {
+          return this.$store.getters.ActiveLocation;
+      },
+      countryOptions() {
+          return [this.$countryOptions()].flat();
+      },
+      provinceOptions() {
       return [this.$provinceOptions(this.countryID)].flat();
     },
     sectorOptions() {
@@ -111,42 +118,60 @@ export default {
   watch: {
     countryID() {
       handler: {
-        let country = !this.showCountry
-          ? this.ActiveLocation.country.id
-          : this.countryOptions.filter((item) => item.id == this.countryID)[0]
-              .id;
-        this.$emit("setcountry", country);
-        this.$set(this, "provinceID", null);
-        if (!this.showProvince) this.initialize();
+          let country = null;
+          if (!this.showCountry) {
+              country = this.ActiveLocation.country.id;
+          } else {
+              const options = this.countryOptions.filter((item) => item.id == this.countryID);
+              country = options[0] ? options[0].id : null
+          }
+
+          this.$emit("setcountry", country);
+          this.$set(this, "provinceID", null);
+          if (!this.showProvince) this.initialize();
       }
     },
     provinceID() {
       handler: {
-        let province = !this.showProvince
-          ? this.ActiveLocation.province.id
-          : this.provinceOptions.filter((item) => item.id == this.provinceID)[0]
-              .id;
-        this.$emit("setprovince", province);
-        this.$set(this, "sectorID", null);
-        if (!this.showSector) this.initialize();
+          let province = null;
+          if (!this.showProvince) {
+              province = this.ActiveLocation.province.id;
+          } else {
+              const options = this.provinceOptions.filter((item) => item.id == this.provinceID);
+              province = options[0] ? options[0].id : null
+          }
+          this.$emit("setprovince", province);
+          this.$set(this, "sectorID", null);
+          if (!this.showSector) this.initialize();
       }
     },
     sectorID() {
       handler: {
-        let sector = !this.showSector
-          ? this.ActiveLocation.sector.id
-          : this.sectorOptions.filter((item) => item.id == this.sectorID)[0].id;
-        this.$emit("setsector", sector);
-        this.$set(this, "groupID", null);
-        if (!this.showGroup) this.initialize();
+          let sector = null;
+          if (!this.showSector) {
+              sector = this.ActiveLocation.sector.id;
+          } else {
+              const options = this.sectorOptions.filter((item) => item.id == this.sectorID);
+              sector = options[0] ? options[0].id : null
+          }
+          this.$emit("setsector", sector);
+          this.$set(this, "groupID", null);
+          if (!this.showGroup) this.initialize();
       }
     },
     groupID() {
       handler: {
-        let group = !this.showGroup
-          ? this.ActiveLocation.group.id
-          : this.groupOptions.filter((item) => item.id == this.groupID)[0].id;
-        this.$emit("setgroup", group);
+          /*   let group = !this.showGroup
+               ? this.ActiveLocation.group.id
+               : this.groupOptions.filter((item) => item.id == this.groupID)[0].id;*/
+          let group = null;
+          if (!this.showSector) {
+              group = this.ActiveLocation.group.id;
+          } else {
+              const options = this.groupOptions.filter((item) => item.id == this.groupID);
+              group = options[0] ? options[0].id : null
+          }
+          this.$emit("setgroup", group);
       }
     },
   },

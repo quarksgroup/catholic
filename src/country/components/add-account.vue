@@ -40,21 +40,40 @@
 
         <b-field label="Email:">
           <b-input
-            type="text"
-            placeholder="Enter email..."
-            validation-message=" "
-            class="br-1 no-shadow"
-            required
-            v-model="email"
+                  type="text"
+                  placeholder="Enter email..."
+                  validation-message=" "
+                  class="br-1 no-shadow"
+                  required
+                  v-model="email"
           />
         </b-field>
-
-        <select-grids
-          @setcountry="SetCountry"
-          @setprovince="SetProvince"
-          @setsector="SetSector"
-          @setgroup="SetGroup"
-        />
+        <b-field class="control ema-add-radios" v-if="canAddAdmin">
+          <b-checkbox v-model="is_admin">Super Admin</b-checkbox>
+        </b-field>
+        <b-field :label="belows_type.charAt(0).toUpperCase() + belows_type.slice(1)" v-if="!is_admin && available">
+          <b-select
+                  placeholder="select country..."
+                  class="br-1"
+                  v-model="type"
+                  validation-message=" "
+                  :disabled="is_admin"
+          >
+            <option
+                    :value="below.id"
+                    v-for="below in belows"
+                    :key="below.id"
+            >{{below.name}}
+            </option>
+          </b-select>
+        </b-field>
+        <!--
+                <select-grids
+                  @setcountry="SetCountry"
+                  @setprovince="SetProvince"
+                  @setsector="SetSector"
+                  @setgroup="SetGroup"
+                />-->
 
         <div class="control ema-btn">
           <button class="button is-primary" type="submit">create account</button>
@@ -70,122 +89,147 @@
 </template>
 
 <script>
-export default {
-  name: "add-account-component",
-  data() {
-    return {
-      state: {
-        loading: false,
-      },
-      name: "",
-      username: "",
-      phone: "",
-      email: "",
-      country: { name: "all", id: null },
-      province: { name: "all", id: null },
-      sector: { name: "all", id: null },
-      group: { name: "all", id: null },
-      default: { name: "all", id: null },
-      CancelRequest: null,
-    };
-  },
-  computed: {
-    location() {
-      return this.$store.getters.location;
-    },
-    ActiveLocation() {
-      return this.$store.getters.ActiveLocation;
-    },
-    showCountry() {
-      if (this.ActiveLocation.country)
-        this.country = this.ActiveLocation.country;
-      return this.ActiveLocation.country ? false : true;
-    },
-    showProvince() {
-      if (this.ActiveLocation.province)
-        this.province = this.ActiveLocation.province;
-      return this.ActiveLocation.province ? false : true;
-    },
-    showSector() {
-      if (this.ActiveLocation.sector) this.sector = this.ActiveLocation.sector;
-      return this.ActiveLocation.sector ? false : true;
-    },
-    showGroup() {
-      if (this.ActiveLocation.group) this.group = this.ActiveLocation.group;
-      return this.ActiveLocation.group ? false : true;
-    },
-  },
-  beforeDestroy() {
-    this.CancelRequestFunction();
-  },
-  methods: {
-    addAccount() {
-      // console.log(this.country);
-      // console.log(this.province);
-      // console.log(this.sector);
-      // console.log(this.group);
-      // return;
-      this.state.loading = true;
-      const CancelToken = this.$CancelToken();
-      let CANCEL_TOKEN;
-      let reqData = {
-        name: this.name,
-        username: this.username,
-        phone: this.phone,
-        email: this.email,
-        country_id: this.country,
-        province_id: this.province,
-        sector_id: this.sector,
-        group_id: this.group,
+  import axiosInstance from "../../axios";
+
+  export default {
+    name: "add-account-component",
+    data() {
+      return {
+        state: {
+          loading: false,
+        },
+        is_admin: false,
+        belows_type: '',
+        available: false,
+        type: '',
+        belows: [],
+        name: "",
+        username: "",
+        phone: "",
+        email: "",
+        country: "1",
+        province: "",
+        sector: "",
+        group: "",
+        default: "",
+        CancelRequest: null,
       };
-      Object.keys(reqData).map(
-        (key) => reqData[key] == null && delete reqData[key]
-      );
-      this.axios
-        .post("user", reqData, {
-          cancelToken: new CancelToken(function executor(token) {
-            CANCEL_TOKEN = token;
-          }),
-        })
-        .then((res) => {
-          this.state.loading = false;
-          if (res.data.message) this.$toast.success(res.data.message);
-          if (res.status == 201) this.$emit("created");
-          this.clear();
-        })
-        .catch((err) => {
-          this.state.loading = false;
-          console.log(err);
-          if (err.errorMessage) this.$toast.error(err.errorMessage);
-        });
-      this.CancelRequest = CANCEL_TOKEN;
     },
-    CancelRequestFunction() {
-      if (typeof this.CancelRequest == "function") this.CancelRequest();
-      this.state.loading = false;
+    computed: {
+      user() {
+        return this.$store.getters.userDetails;
+      },
+      canAddAdmin() {
+        if (!this.user.role)
+          return false;
+        return this.user.role.slug === "admin";
+      },
+      location() {
+        return this.$store.getters.location;
+      },
+      ActiveLocation() {
+        return this.$store.getters.ActiveLocation;
+      },
+      showCountry() {
+        if (this.ActiveLocation.country)
+          this.country = this.ActiveLocation.country;
+        return this.ActiveLocation.country ? false : true;
+      },
+      showProvince() {
+        if (this.ActiveLocation.province)
+          this.province = this.ActiveLocation.province;
+        return this.ActiveLocation.province ? false : true;
+      },
+      showSector() {
+        if (this.ActiveLocation.sector) this.sector = this.ActiveLocation.sector;
+        return this.ActiveLocation.sector ? false : true;
+      },
+      showGroup() {
+        if (this.ActiveLocation.group) this.group = this.ActiveLocation.group;
+        return this.ActiveLocation.group ? false : true;
+      },
     },
-    SetCountry(country) {
-      this.$set(this, "country", country);
+    beforeDestroy() {
+      this.CancelRequestFunction();
     },
-    SetProvince(province) {
-      this.$set(this, "province", province);
+    methods: {
+      addAccount() {
+        // console.log(this.country);
+        // console.log(this.province);
+        // console.log(this.sector);
+        // console.log(this.group);
+        // return;
+        this.state.loading = true;
+        const CancelToken = this.$CancelToken();
+        let CANCEL_TOKEN;
+        let reqData = {
+          name: this.name,
+          username: this.username,
+          phone: this.phone,
+          email: this.email,
+          type: this.type,
+          is_admin: this.is_admin,
+        };
+        Object.keys(reqData).map(
+                (key) => reqData[key] == null && delete reqData[key]
+        );
+        this.axios
+                .post("user", reqData, {
+                  cancelToken: new CancelToken(function executor(token) {
+                    CANCEL_TOKEN = token;
+                  }),
+                })
+                .then((res) => {
+                  this.state.loading = false;
+                  if (res.data.message) this.$toast.success(res.data.message);
+                  if (res.status == 201) this.$emit("created");
+                  this.clear();
+                })
+                .catch((err) => {
+                  this.state.loading = false;
+                  console.log(err);
+                  if (err.errorMessage) this.$toast.error(err.errorMessage);
+                });
+        this.CancelRequest = CANCEL_TOKEN;
+      },
+      CancelRequestFunction() {
+        if (typeof this.CancelRequest == "function") this.CancelRequest();
+        this.state.loading = false;
+      },
+      SetCountry(country) {
+        this.$set(this, "country", country);
+      },
+      SetProvince(province) {
+        this.$set(this, "province", province);
+      },
+      SetSector(sector) {
+        this.$set(this, "sector", sector);
+      },
+      SetGroup(group) {
+        this.$set(this, "group", group);
+      },
+      clear() {
+        this.name = "";
+        this.username = "";
+        this.phone = "";
+        this.email = '';
+        this.CancelRequest = null;
+        this.$emit("clear-selects");
+      },
+      loadBelows() {
+        axiosInstance.get("user-belows")
+                .then(res => {
+                  this.belows = res.data.data;
+                  this.belows_type = res.data.type;
+                  this.available = res.data.available;
+                  this.type = res.data.data[0] ? res.data.data[0].id : ''
+                });
+      }
     },
-    SetSector(sector) {
-      this.$set(this, "sector", sector);
-    },
-    SetGroup(group) {
-      this.$set(this, "group", group);
-    },
-    clear() {
-      this.name = "";
-      this.username = "";
-      this.phone = "";
-      this.email = ''
-      this.CancelRequest = null;
-      this.$emit("clear-selects");
-    },
-  },
-};
+    created() {
+      this.loadBelows()
+    }
+  };
 </script>
 
 <style lang="scss">

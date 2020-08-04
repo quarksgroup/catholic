@@ -18,7 +18,6 @@ Vue.use(VModal, {
     draggable: false,
     resizable: false,
     adaptive: true,
-    draggable: false,
     scrollable: true,
     focusTrap: true,
     reset: true,
