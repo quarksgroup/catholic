@@ -1,6 +1,6 @@
 <template>
   <div class="select-grids">
-    <b-field label="Country:" v-if="showCountry">
+    <b-field label="Country:" >
       <b-select
               placeholder="select country..."
               class="br-1"
@@ -18,7 +18,7 @@
       </b-select>
     </b-field>
 
-    <b-field label="Province:" v-if="showProvince">
+    <b-field label="Province:" >
       <b-select
               placeholder="select province..."
               class="br-1"
@@ -36,7 +36,7 @@
       </b-select>
     </b-field>
 
-    <b-field label="Sector:" v-if="showSector">
+    <b-field label="Sector:">
       <b-select
               placeholder="select sector..."
               class="br-1"
@@ -50,7 +50,7 @@
       </b-select>
     </b-field>
 
-    <b-field label="Groupe de priere:" v-if="showGroup && canSelectGroup">
+    <b-field label="Groupe de priere:" >
       <b-select
               placeholder="select Gr.Priere..."
               class="br-1"

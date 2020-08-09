@@ -54,3 +54,10 @@ $link-focus-border: $primary;
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
 }
+input,
+button {
+  font-family: inherit;
+  &::placeholder {
+    font-family: inherit;
+  }
+}
