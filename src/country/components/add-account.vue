@@ -48,10 +48,10 @@
             v-model="email"
           />
         </b-field>
-        <b-field class="control ema-add-radios" v-if="canAddAdmin">
+        <!-- <b-field class="control ema-add-radios" v-if="canAddAdmin">
           <b-checkbox v-model="is_admin">Super Admin</b-checkbox>
-        </b-field>
-        <b-field
+        </b-field>-->
+        <!-- <b-field
           :label="belows_type.charAt(0).toUpperCase() + belows_type.slice(1)"
           v-if="!is_admin && available"
         >
@@ -64,14 +64,14 @@
           >
             <option :value="below.id" v-for="below in belows" :key="below.id">{{below.name}}</option>
           </b-select>
-        </b-field>
-        <!--
-                <select-grids
-                  @setcountry="SetCountry"
-                  @setprovince="SetProvince"
-                  @setsector="SetSector"
-                  @setgroup="SetGroup"
-        />-->
+        </b-field>-->
+
+        <select-grids
+          @setcountry="SetCountry"
+          @setprovince="SetProvince"
+          @setsector="SetSector"
+          @setgroup="SetGroup"
+        />
 
         <div class="control ema-btn">
           <button class="button is-primary" type="submit">create account</button>
@@ -103,11 +103,11 @@ export default {
       username: "",
       phone: "",
       email: "",
-      country: "1",
-      province: "",
-      sector: "",
-      group: "",
-      default: "",
+      country: null,
+      province: null,
+      sector: null,
+      group: null,
+      default: null,
       CancelRequest: null,
     };
   },
@@ -125,30 +125,9 @@ export default {
     ActiveLocation() {
       return this.$store.getters.ActiveLocation;
     },
-    showCountry() {
-      if (this.ActiveLocation.country)
-        this.country = this.ActiveLocation.country;
-      return this.ActiveLocation.country ? false : true;
-    },
-    showProvince() {
-      if (this.ActiveLocation.province)
-        this.province = this.ActiveLocation.province;
-      return this.ActiveLocation.province ? false : true;
-    },
-    showSector() {
-      if (this.ActiveLocation.sector) this.sector = this.ActiveLocation.sector;
-      return this.ActiveLocation.sector ? false : true;
-    },
-    showGroup() {
-      if (this.ActiveLocation.group) this.group = this.ActiveLocation.group;
-      return this.ActiveLocation.group ? false : true;
-    },
   },
   beforeDestroy() {
     this.CancelRequestFunction();
-  },
-  created() {
-    this.loadBelows();
   },
   methods: {
     addAccount() {
@@ -165,8 +144,10 @@ export default {
         username: this.username,
         phone: this.phone,
         email: this.email,
-        type: this.type,
-        is_admin: this.is_admin,
+        country_id: this.country,
+        province_id: this.province,
+        sector_id: this.sector,
+        group_id: this.group,
       };
       Object.keys(reqData).map(
         (key) => reqData[key] == null && delete reqData[key]
