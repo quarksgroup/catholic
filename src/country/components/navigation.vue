@@ -1,33 +1,51 @@
 <template>
   <nav id="country-nav">
-    <div class="logo">
-      <!-- <img src="../../assets/img/logo.svg" /> -->
-      EmaRWANDA
-    </div>
+    <div class="logo">EmaRWANDA</div>
     <div class="links">
       <ul>
         <router-link tag="li" :to="'/country'" :exact-active-class="'active'">
-          <i class="fa fa-bell" />Announcements
+          <i class="fa fa-bell" />Amatangazo
         </router-link>
-        <router-link tag="li" :to="'/country/testimonials'" :exact-active-class="'active'">
-          <i class="fa fa-comment-dots" />Testimonials
+        <router-link
+          tag="li"
+          :to="'/country/testimonials'"
+          :exact-active-class="'active'"
+        >
+          <i class="fa fa-comment-dots" />Ubuhamya
         </router-link>
-        <router-link tag="li" :to="'/country/studies'" :exact-active-class="'active'">
+        <router-link
+          tag="li"
+          :to="'/country/studies'"
+          :exact-active-class="'active'"
+        >
           <i class="fa fa-play-circle" />Inyigisho
         </router-link>
-        <router-link tag="li" :to="'/country/accounts'" :exact-active-class="'active'">
+        <router-link
+          tag="li"
+          :to="'/country/accounts'"
+          :exact-active-class="'active'"
+        >
           <i class="fa fa-user-cog" />Accounts
         </router-link>
       </ul>
     </div>
 
-    <b-dropdown aria-role="list" class="__nav-dropdown" position="is-bottom-left">
+    <b-dropdown
+      aria-role="list"
+      class="__nav-dropdown"
+      position="is-bottom-left"
+    >
       <div class="user-profile" slot="trigger">
         <img :src="user_logo" />
       </div>
-      <b-dropdown-item custom aria-role="menuitem" class="custom" v-if="user && user.name">
+      <b-dropdown-item
+        custom
+        aria-role="menuitem"
+        class="custom"
+        v-if="user && user.name"
+      >
         Logged in as
-        <b>{{user.name}}</b>
+        <b>{{ user.name }}</b>
       </b-dropdown-item>
       <hr class="dropdown-divider" aria-role="menuitem" />
       <b-dropdown-item aria-role="listitem">
@@ -36,7 +54,11 @@
         </router-link>
       </b-dropdown-item>
       <b-dropdown-item aria-role="menuitem">
-        <router-link tag="li" exact-active-class="active-link" to="/testimonials-requests">
+        <router-link
+          tag="li"
+          exact-active-class="active-link"
+          to="/testimonials-requests"
+        >
           <b-icon pack="fa" icon="random"></b-icon>Testimonials Requests
         </router-link>
       </b-dropdown-item>
