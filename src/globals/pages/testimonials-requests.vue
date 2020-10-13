@@ -2,14 +2,20 @@
   <div id="testimonials-request-page">
     <header>
       <h2>Testimonial Requests</h2>
-      <button class="button is-outlined is-primary" @click="fetchRequests">Refresh</button>
+      <button class="button is-primary br-1" @click="fetchRequests">
+        Refresh
+      </button>
     </header>
     <div class="loading" v-if="state.loading">
       <i class="loading-dark" />
       <p>Loading Testimonial Requests</p>
     </div>
     <div class="content" v-else-if="show_requests">
-      <testimonial-request v-for="(req,i) in shownRequests" :key="i" :request="req" />
+      <testimonial-request
+        v-for="(req, i) in shownRequests"
+        :key="i"
+        :request="req"
+      />
     </div>
     <div class="error" v-else>
       <article>There are no Testimonial requests, for now!</article>
@@ -81,11 +87,15 @@ export default {
   & > header {
     width: 100%;
     min-width: 300px;
-    display: flex;
-    justify-content: space-between;
     align-items: flex-end;
-    padding: 0 1rem;
-    margin-bottom: 1.5rem;
+    display: flex;
+    padding: 0.25rem;
+    align-items: center;
+    border-bottom: 2px solid #999;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
 
     h2 {
       font-size: 1.35rem;
@@ -120,9 +130,11 @@ export default {
   }
   & > .error {
     display: flex;
-    padding: 3rem;
+    padding: 5rem;
     font-weight: bold;
-    width: fit-content;
+    width: 100%;
+    justify-content: center;
+    font-size: 1.15rem;
     margin: auto;
     background: white;
     box-shadow: 0 2px 5px 0 rgba(32, 33, 36, 0.23);
